@@ -1,35 +1,35 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { useState, useRef } from 'react';
+import './styles/styles.scss'
 
-function App() {
-  const [count, setCount] = useState(0)
+const App = () => {
+    const [messages, setMessages] = useState<string[]>([]);
+    const textBoxRef = useRef<HTMLInputElement>(null);
 
-  return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    const handleSendMessage = (e: React.KeyboardEvent<HTMLInputElement>) => {
+        if (e.key === "Enter") {
+            if (textBoxRef.current) {
+                const newMessage = textBoxRef.current.value;
+                setMessages(prev => [...prev, newMessage]);
+                textBoxRef.current.value = "";
+            }
+        }
+    }
+
+    return (
+        <main>
+            <div className="Main-Container">
+                <ul>
+                    {messages.map((message, index) => (
+                        <li key={index} className="Client-Message">
+                            <div>{message}</div>
+                        </li>
+                    ))}
+                </ul>
+
+                <input type="text" placeholder="Pregunta lo que quieras..." ref={textBoxRef} onKeyDown={handleSendMessage}/>
+            </div>
+        </main>
+    )
 }
 
 export default App
