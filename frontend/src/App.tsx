@@ -8,8 +8,10 @@ const App = () => {
     const [currentConversation, setCurrentConversation] = useState<Conversation | null>(null);
     const [conversations, setConversations] = useState<Conversation[]>([]);
     const [messages, setMessages] = useState<Message[]>([]);
+    const [file, setFile] = useState<File | null>(null);
     const textBoxRef = useRef<HTMLInputElement>(null);
 
+    // Load conversations from the database
     useEffect(() => {
         const get_conversations = async () => {
             const response = await fetch('http://localhost:8000/conversations');
@@ -20,6 +22,7 @@ const App = () => {
         get_conversations();
     }, [])
 
+    // Update the corresponding messages when the conversation is changed
     useEffect(() => {
         if (!currentConversation) {
             setMessages([]);
@@ -35,6 +38,7 @@ const App = () => {
 
         get_messages();
     }, [currentConversation])
+
 
     const handleSendMessage = async (e: React.KeyboardEvent<HTMLInputElement>) => {
         if (e.key === "Enter") {
@@ -62,6 +66,21 @@ const App = () => {
         }
     }
 
+    const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
+        e.preventDefault();
+
+        if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+            setFile(e.dataTransfer.files[0]);
+            e.dataTransfer.clearData();
+        }
+
+        alert(file)
+    }
+
+    const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
+        e.preventDefault();
+    };
+
     return (
         <main>
             <div className="Side-Menu">
@@ -79,7 +98,7 @@ const App = () => {
             </div>
 
             <div className="Chat-Container">
-                <div className="Messages-Container">
+                <div className="Messages-Container" onDrop={handleDrop} onDragOver={handleDragOver}>
                     <ul>
                         {Object.values(messages).map((m, i) => (
                             <li key={i} className={m.messageFrom === "Client" ? "Client-Message" : "Server-Message"}>
