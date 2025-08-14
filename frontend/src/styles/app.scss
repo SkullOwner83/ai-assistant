@@ -20,12 +20,11 @@ main {
                 color: black;
                 margin-bottom: 16px;
 
-                &.Client-Message {
-                    justify-content: right;
-                }
+                &.Client-Message { justify-content: right; }
+                &.Server-Message { justify-content: left; }
 
                 div {
-                    background-color: lightgray;
+                    background-color: rgb(230, 230, 230);
                     border-radius: 8px;
                     padding: 16px;
                 }
