@@ -1,15 +1,20 @@
 import os
 from fastapi import FastAPI
-from pydantic import BaseModel
 from fastapi.middleware.cors import CORSMiddleware
+from models.ask_payload import AskPayload
 from openai import OpenAI
 
 API_KEY = os.getenv('OPENAI_API_KEY')
 client = OpenAI(api_key=API_KEY)
 app = FastAPI()
 
-class AskPayload(BaseModel):
-    question: str
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:5173"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 @app.get('/')
 def read_root():
@@ -27,5 +32,6 @@ async def ask(payload: AskPayload):
     )
 
     answer = response.choices[0].message.content
+    print('Se ha recibido una peticion.')
     return { 'answer': answer }
 
