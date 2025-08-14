@@ -44,7 +44,7 @@ async def ask(payload: AskPayload, db: Session = Depends(open_conecction)):
 
     answer = Message(
         messageFrom = 'Server',
-        content = response.choices[0].message.contents
+        content = response.choices[0].message.content
     )
     
     message = Message(
@@ -56,6 +56,7 @@ async def ask(payload: AskPayload, db: Session = Depends(open_conecction)):
     db.add(answer)
     db.commit()
     db.refresh(message)
+    db.refresh(answer)
 
-    return { 'answer': answer }
+    return answer
 
