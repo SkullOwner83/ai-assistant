@@ -7,6 +7,24 @@ main {
         grid-column: 1;
         width: 300px;
         background-color: rgb(230, 230, 230);
+        
+        button {
+            width: 100%;
+            text-align: left;
+            font-size: 16px;
+            height: 32px;
+            padding: 0px 16px;
+            border: 0px;
+            
+            &:hover { 
+                cursor: pointer; 
+                background-color: rgb(210, 210, 210);
+            }
+        }
+
+        .Action-Buttons button {
+            text-align: center;
+        }
     }
 
     .Chat-Container {

@@ -1,4 +1,5 @@
 import os
+from typing import Optional
 from sqlalchemy.orm import Session
 from dotenv import load_dotenv
 from fastapi import FastAPI, Depends
@@ -7,6 +8,7 @@ from models.ask_payload import AskPayload
 from openai import OpenAI
 from database import SessionLocal, open_conecction
 from models.message import Message
+from models.conversation import Conversation
 
 load_dotenv()
 API_KEY = os.getenv('OPENAI_API_KEY')
@@ -25,14 +27,20 @@ app.add_middleware(
 def read_root():
     return 'AI Assistant'
 
+@app.get('/conversations')
+async def get_conversations(db: Session = Depends(open_conecction)):
+    conversations = db.query(Conversation).all()
+    return conversations
+
+
 @app.get('/messages')
-async def get_messages(db: Session = Depends(open_conecction)):
-    messages = db.query(Message).all()
+async def get_messages(conversation_id: int, db: Session = Depends(open_conecction)):
+    messages = db.query(Message).filter(Message.conversationId == conversation_id).all()
     print(messages)
     return messages
 
 @app.post('/ask')
-async def ask(payload: AskPayload, db: Session = Depends(open_conecction)):
+async def ask(payload: AskPayload, conversation_id: Optional[int] = None, db: Session = Depends(open_conecction)):
     response = client.chat.completions.create(  
         model='gpt-4o-mini',
         store=False,
@@ -42,14 +50,23 @@ async def ask(payload: AskPayload, db: Session = Depends(open_conecction)):
         ]
     )
 
+    if not conversation_id:
+        conversation = Conversation(title=payload.question[:50])
+        db.add(conversation)
+        db.commit()
+        db.refresh(conversation)
+        conversation_id = conversation.idConversation
+
     answer = Message(
         messageFrom = 'Server',
-        content = response.choices[0].message.content
+        content = response.choices[0].message.content,
+        conversationId = conversation_id
     )
     
     message = Message(
         messageFrom = 'Client',
         content = payload.question,
+        conversationId = conversation_id
     )
 
     db.add(message)

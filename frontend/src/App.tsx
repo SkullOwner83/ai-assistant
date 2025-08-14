@@ -1,21 +1,40 @@
 import { useState, useRef, useEffect } from 'react';
 import { v4 as uuid } from 'uuid'
 import type { Message } from './interfaces/message';
+import type { Conversation } from './interfaces/conversation';
 import './styles/styles.scss'
 
 const App = () => {
+    const [currentConversation, setCurrentConversation] = useState<Conversation | null>(null);
+    const [conversations, setConversations] = useState<Conversation[]>([]);
     const [messages, setMessages] = useState<Message[]>([]);
     const textBoxRef = useRef<HTMLInputElement>(null);
 
     useEffect(() => {
-        const get_messages = async () => {
-            const response = await fetch('http://localhost:8000/messages');
+        const get_conversations = async () => {
+            const response = await fetch('http://localhost:8000/conversations');
             const data = await response.json();
+            setConversations(data);
+        }
+
+        get_conversations();
+    }, [])
+
+    useEffect(() => {
+        if (!currentConversation) {
+            setMessages([]);
+            return
+        }
+
+        const get_messages = async () => {
+            const response = await fetch(`http://localhost:8000/messages?conversation_id=${currentConversation.idConversation}`);
+            const data = await response.json();
+            console.log(data);
             setMessages(data)
         }
 
-        get_messages()
-    }, [])
+        get_messages();
+    }, [currentConversation])
 
     const handleSendMessage = async (e: React.KeyboardEvent<HTMLInputElement>) => {
         if (e.key === "Enter") {
@@ -47,15 +66,24 @@ const App = () => {
         <main>
             <div className="Side-Menu">
                 <ul>
+                    {Object.values(conversations).map((c, i) => (
+                        <li key={i}>
+                            <button onClick={()=> setCurrentConversation(c)}>{c.title}</button>
+                        </li>
+                    ))}
                 </ul>
+
+                <div className='Action-Buttons'>
+                    <button onClick={() => setCurrentConversation(null)}>+</button>
+                </div>
             </div>
 
             <div className="Chat-Container">
                 <div className="Messages-Container">
                     <ul>
-                        {Object.values(messages).map((message, index) => (
-                            <li key={index} className={message.messageFrom === "Client" ? "Client-Message" : "Server-Message"}>
-                                <div>{message.content}</div>
+                        {Object.values(messages).map((m, i) => (
+                            <li key={i} className={m.messageFrom === "Client" ? "Client-Message" : "Server-Message"}>
+                                <div>{m.content}</div>
                             </li>
                         ))}
                     </ul>
