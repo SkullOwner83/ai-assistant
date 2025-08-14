@@ -25,6 +25,12 @@ app.add_middleware(
 def read_root():
     return 'AI Assistant'
 
+@app.get('/messages')
+async def get_messages(db: Session = Depends(open_conecction)):
+    messages = db.query(Message).all()
+    print(messages)
+    return messages
+
 @app.post('/ask')
 async def ask(payload: AskPayload, db: Session = Depends(open_conecction)):
     response = client.chat.completions.create(  
@@ -38,7 +44,7 @@ async def ask(payload: AskPayload, db: Session = Depends(open_conecction)):
 
     answer = Message(
         messageFrom = 'Server',
-        content = response.choices[0].message.content
+        content = response.choices[0].message.contents
     )
     
     message = Message(
