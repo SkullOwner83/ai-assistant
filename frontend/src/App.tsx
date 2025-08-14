@@ -37,23 +37,33 @@ const App = () => {
                 });
 
                 const data = await response.json();
-                setMessages(prev => [...prev, data.answer]);
+                console.log(data)
+                setMessages(prev => [...prev, data]);
             }
         }
     }
 
     return (
         <main>
-            <div className="Main-Container">
+            <div className="Side-Menu">
                 <ul>
-                    {Object.values(messages).map((message, index) => (
-                        <li key={index} className={message.messageFrom === "Client" ? "Client-Message" : "Server-Message"}>
-                            <div>{message.content}</div>
-                        </li>
-                    ))}
                 </ul>
+            </div>
 
-                <input type="text" placeholder="Pregunta lo que quieras..." ref={textBoxRef} onKeyDown={handleSendMessage}/>
+            <div className="Chat-Container">
+                <div className="Messages-Container">
+                    <ul>
+                        {Object.values(messages).map((message, index) => (
+                            <li key={index} className={message.messageFrom === "Client" ? "Client-Message" : "Server-Message"}>
+                                <div>{message.content}</div>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+
+                <div className="Text-Container">
+                    <input type="text" placeholder="Pregunta lo que quieras..." ref={textBoxRef} onKeyDown={handleSendMessage}/>
+                </div>
             </div>
         </main>
     )
