@@ -44,6 +44,11 @@ const App = () => {
         if (e.key === "Enter") {
             if (textBoxRef.current) {
                 const content = textBoxRef.current.value
+                const dataForm = new FormData();
+                dataForm.append("question", content)
+                if (currentConversation) dataForm.append("conversation_id", currentConversation.idConversation)
+                if (file) dataForm.append("file", file);
+
                 const newMessage = {
                     idMessage: uuid(),
                     messageFrom: "Client",
@@ -52,15 +57,14 @@ const App = () => {
 
                 setMessages(prev => [...prev, newMessage]);
                 textBoxRef.current.value = "";
+                setFile(null)
 
                 const response = await fetch('http://localhost:8000/ask', {
                     method: 'POST',
-                    headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify({'question': content})
+                    body: dataForm
                 });
 
                 const data = await response.json();
-                console.log(data)
                 setMessages(prev => [...prev, data]);
             }
         }
@@ -73,8 +77,6 @@ const App = () => {
             setFile(e.dataTransfer.files[0]);
             e.dataTransfer.clearData();
         }
-
-        alert(file)
     }
 
     const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
@@ -109,7 +111,10 @@ const App = () => {
                 </div>
 
                 <div className="Text-Container">
-                    <input type="text" placeholder="Pregunta lo que quieras..." ref={textBoxRef} onKeyDown={handleSendMessage}/>
+                    <div className="Input-Wrapper">
+                        <img src="clip.png" className={file? "Visible" : ""}/>
+                        <input type="text" placeholder="Pregunta lo que quieras..." ref={textBoxRef} onKeyDown={handleSendMessage}/>
+                    </div>
                 </div>
             </div>
         </main>

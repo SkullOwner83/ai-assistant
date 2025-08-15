@@ -3,7 +3,7 @@ from langchain_text_splitters import RecursiveCharacterTextSplitter
 from fastapi import UploadFile
 from langchain.docstore.document import Document
 
-class DatasetProcesator:
+class DatasetProcesator():
     @staticmethod
     async def process_file(file: UploadFile) -> List[Document]:
         content = await file.read()
@@ -11,11 +11,16 @@ class DatasetProcesator:
         if file.filename.endswith(".txt"):
             text = content.decode("utf-8", errors="ignore")
             documents = [Document(page_content=text, metadata={"source": file.filename})]
+        else:
+            raise ValueError(f"Formato no soportado: {file.filename}")
 
         return documents
 
     @staticmethod
-    def chunk_text(text: str, chunk_size: Optional[int] = 300, chunk_overlap: Optional[int] = 50, separators: Optional[list[str]] = None):
+    def chunk_text(text: str, chunk_size: Optional[int] = 300, chunk_overlap: Optional[int] = 50, separators: Optional[List[str]] = None):
+        if chunk_overlap >= chunk_size:
+            chunk_overlap = chunk_size // 5
+
         if separators is None:
             separators = ["\n\n", "\n"]
 
@@ -29,7 +34,10 @@ class DatasetProcesator:
         return chunks
     
     @staticmethod
-    async def chunk_file(file: UploadFile, chunk_size: Optional[int] = 300, chunk_overlap: Optional[int] = 50, separators: Optional[str] = None):
+    async def chunk_file(file: UploadFile, chunk_size: Optional[int] = 300, chunk_overlap: Optional[int] = 50, separators: Optional[List[str]] = None):
+        if chunk_overlap >= chunk_size:
+            chunk_overlap = chunk_size // 5
+
         if separators is None:
             separators = ["\n\n", "\n"]
 
@@ -40,7 +48,6 @@ class DatasetProcesator:
         )
 
         documents = await DatasetProcesator.process_file(file)
-
         chunks = splitter.split_documents(documents)
         return chunks
 

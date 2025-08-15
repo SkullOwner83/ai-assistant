@@ -15,6 +15,9 @@ main {
             height: 32px;
             padding: 0px 16px;
             border: 0px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
             
             &:hover { 
                 cursor: pointer; 
@@ -43,6 +46,7 @@ main {
 
             ul {
                 max-width: 840px;
+                flex-grow: 1;
                 
                 li {
                     display: flex;
@@ -66,15 +70,32 @@ main {
             padding: 32px;
             display: flex;
             justify-content: center;
+            align-items: center;
 
-            input[type=text] {
+            .Input-Wrapper {
                 width: 100%;
-                height: 40px;
                 max-width: 840px;
-                padding: 0px 16px;
-                font-size: 16px;
-                border: 2px solid gray;
-                border-radius: 8px;
+                display: flex;
+                align-items: center;
+                position: relative;
+
+                img {
+                    visibility: hidden;
+                    position: absolute;
+                    width: 24px;
+                    right: 8px;
+
+                    &.Visible { visibility: visible; }
+                }
+
+                input[type=text] {
+                    width: 100%;
+                    height: 40px;
+                    padding: 0px 16px;
+                    font-size: 16px;
+                    border: 2px solid gray;
+                    border-radius: 8px;
+                }
             }
         }
     }
