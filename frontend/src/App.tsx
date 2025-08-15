@@ -39,7 +39,7 @@ const App = () => {
         get_messages();
     }, [currentConversation])
 
-
+    // Send the message and wait for the reponse to the server
     const handleSendMessage = async (e: React.KeyboardEvent<HTMLInputElement>) => {
         if (e.key === "Enter") {
             if (textBoxRef.current) {

@@ -1,5 +1,5 @@
 import os
-from typing import Optional
+from typing import List, Optional
 from sqlalchemy.orm import Session
 from dotenv import load_dotenv
 from fastapi import FastAPI, Depends
@@ -12,7 +12,7 @@ from models.conversation import Conversation
 
 load_dotenv()
 API_KEY = os.getenv('OPENAI_API_KEY')
-client = OpenAI(api_key=API_KEY)
+openai = OpenAI(api_key=API_KEY)
 app = FastAPI()
 
 app.add_middleware(
@@ -41,7 +41,7 @@ async def get_messages(conversation_id: int, db: Session = Depends(open_coneccti
 
 @app.post('/ask')
 async def ask(payload: AskPayload, conversation_id: Optional[int] = None, db: Session = Depends(open_conecction)):
-    response = client.chat.completions.create(  
+    response = openai.chat.completions.create(  
         model='gpt-4o-mini',
         store=False,
         messages=[
