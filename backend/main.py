@@ -5,14 +5,16 @@ from dotenv import load_dotenv
 from fastapi import FastAPI, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from models.ask_payload import AskPayload
-from openai import OpenAI
+from openai import OpenAI, embeddings
 from database import SessionLocal, open_conecction
 from models.message import Message
 from models.conversation import Conversation
+from embeddings import Embeddings
 
 load_dotenv()
 API_KEY = os.getenv('OPENAI_API_KEY')
 openai = OpenAI(api_key=API_KEY)
+embeddings = Embeddings(openai)
 app = FastAPI()
 
 app.add_middleware(
