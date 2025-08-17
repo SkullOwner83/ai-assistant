@@ -3,32 +3,7 @@ main {
     grid-template-columns: auto 1fr;
     height: 100dvh;
 
-    .Side-Menu {
-        grid-column: 1;
-        width: 300px;
-        background-color: rgb(230, 230, 230);
-        
-        button {
-            width: 100%;
-            text-align: left;
-            font-size: 16px;
-            height: 32px;
-            padding: 0px 16px;
-            border: 0px;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            
-            &:hover { 
-                cursor: pointer; 
-                background-color: rgb(210, 210, 210);
-            }
-        }
-
-        .Action-Buttons button {
-            text-align: center;
-        }
-    }
+    .Side-Menu { grid-column: 1; }
 
     .Chat-Container {
         grid-column: 2;
@@ -100,3 +75,6 @@ main {
         }
     }
 }
+
+.Visible { visibility: visible; }
+.Hidden { visibility: hidden; }
