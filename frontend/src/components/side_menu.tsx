@@ -11,10 +11,11 @@ interface SideMenuProp {
 
 export const SideMenu: React.FC<SideMenuProp> = ({ isOpen, items, selectedItem, onSelectedItem, onToggle }) => {
     return (
-        <div className={`Side-Menu ${!isOpen ? "Hidden-Menu" : ""}`}>
+        <div className={`SideMenu-Component ${!isOpen ? "Hidden-Menu" : ""}`}>
             <button className="Hidde-Button" onClick={()=> onToggle()}>-</button>
+
             <ul className={!isOpen ? "Hidden" : ""}>
-                {Object.values(items).map((item, index) => (
+                {items.map((item, index) => (
                     <li key={index}>
                         <button
                             className={selectedItem == item ? "Active" : ""} 

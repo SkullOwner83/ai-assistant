@@ -3,8 +3,12 @@ import { v4 as uuid } from 'uuid'
 import type { Message } from './interfaces/message';
 import type { Conversation } from './interfaces/conversation';
 import './styles/styles.scss'
+import { DragZone } from './components/drag_zone';
+import { SideMenu } from './components/side_menu';
+import { Chat } from './components/chat';
 
-const App = () => {
+const App: React.FC = () => {
+    const [sideMenu, setSideMenu] = useState(true);
     const [currentConversation, setCurrentConversation] = useState<Conversation | null>(null);
     const [conversations, setConversations] = useState<Conversation[]>([]);
     const [messages, setMessages] = useState<Message[]>([]);
@@ -40,36 +44,35 @@ const App = () => {
     }, [currentConversation])
 
     // Send the message and wait for the reponse to the server
-    const handleSendMessage = async (e: React.KeyboardEvent<HTMLInputElement>) => {
-        if (e.key === "Enter") {
-            if (textBoxRef.current) {
-                const content = textBoxRef.current.value
-                const dataForm = new FormData();
-                dataForm.append("question", content)
-                if (currentConversation) dataForm.append("conversation_id", currentConversation.idConversation)
-                if (file) dataForm.append("file", file);
+    const handleSendMessage = async () => {
+        if (textBoxRef.current) {
+            const content = textBoxRef.current.value
+            const formData = new FormData();
+            formData.append("question", content)
+            if (currentConversation) formData.append("conversation_id", currentConversation.idConversation)
+            if (file) formData.append("file", file);
 
-                const newMessage = {
-                    idMessage: uuid(),
-                    messageFrom: "Client",
-                    content: content
-                };
+            const newMessage = {
+                idMessage: uuid(),
+                messageFrom: "Client",
+                content: content
+            };
 
-                setMessages(prev => [...prev, newMessage]);
-                textBoxRef.current.value = "";
-                setFile(null)
+            setMessages(prev => [...prev, newMessage]);
+            textBoxRef.current.value = "";
+            setFile(null)
 
-                const response = await fetch('http://localhost:8000/ask', {
-                    method: 'POST',
-                    body: dataForm
-                });
+            const response = await fetch('http://localhost:8000/ask', {
+                method: 'POST',
+                body: formData
+            });
 
-                const data = await response.json();
-                setMessages(prev => [...prev, data]);
-            }
+            const data = await response.json();
+            setMessages(prev => [...prev, data]);
         }
     }
 
+    // Get the dropped file and set it to the state
     const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
         e.preventDefault();
 
@@ -79,44 +82,27 @@ const App = () => {
         }
     }
 
+    // Prevent the default behavior of the browser in the drag event of control
     const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
         e.preventDefault();
     };
 
     return (
         <main>
-            <div className="Side-Menu">
-                <ul>
-                    {Object.values(conversations).map((c, i) => (
-                        <li key={i}>
-                            <button onClick={()=> setCurrentConversation(c)}>{c.title}</button>
-                        </li>
-                    ))}
-                </ul>
+            <SideMenu 
+                isOpen={sideMenu} 
+                items={conversations} 
+                selectedItem={currentConversation} 
+                onSelectedItem={setCurrentConversation} 
+                onToggle={() => setSideMenu(!sideMenu)}/>
 
-                <div className='Action-Buttons'>
-                    <button onClick={() => setCurrentConversation(null)}>+</button>
-                </div>
-            </div>
-
-            <div className="Chat-Container">
-                <div className="Messages-Container" onDrop={handleDrop} onDragOver={handleDragOver}>
-                    <ul>
-                        {Object.values(messages).map((m, i) => (
-                            <li key={i} className={m.messageFrom === "Client" ? "Client-Message" : "Server-Message"}>
-                                <div>{m.content}</div>
-                            </li>
-                        ))}
-                    </ul>
-                </div>
-
-                <div className="Text-Container">
-                    <div className="Input-Wrapper">
-                        <img src="clip.png" className={file? "Visible" : ""}/>
-                        <input type="text" placeholder="Pregunta lo que quieras..." ref={textBoxRef} onKeyDown={handleSendMessage}/>
-                    </div>
-                </div>
-            </div>
+            <Chat 
+                messages={messages} 
+                textBoxRef={textBoxRef}
+                attachedFile={file}
+                onSendMessage={handleSendMessage} 
+                onDrop={handleDrop} 
+                onDragOver={handleDragOver}/>
         </main>
     )
 }
