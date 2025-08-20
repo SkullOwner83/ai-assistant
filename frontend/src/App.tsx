@@ -2,10 +2,10 @@ import { useState, useRef, useEffect } from 'react';
 import { v4 as uuid } from 'uuid'
 import type { Message } from './interfaces/message';
 import type { Conversation } from './interfaces/conversation';
-import './styles/styles.scss'
-import { DragZone } from './components/drag_zone';
 import { SideMenu } from './components/side_menu';
 import { Chat } from './components/chat';
+import { DragZone } from './components/drag_zone';
+import './styles/styles.scss'
 
 const App: React.FC = () => {
     const [sideMenu, setSideMenu] = useState(true);
@@ -60,7 +60,6 @@ const App: React.FC = () => {
 
             setMessages(prev => [...prev, newMessage]);
             textBoxRef.current.value = "";
-            setFile(null)
 
             const response = await fetch('http://localhost:8000/ask', {
                 method: 'POST',
@@ -72,21 +71,6 @@ const App: React.FC = () => {
         }
     }
 
-    // Get the dropped file and set it to the state
-    const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
-        e.preventDefault();
-
-        if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
-            setFile(e.dataTransfer.files[0]);
-            e.dataTransfer.clearData();
-        }
-    }
-
-    // Prevent the default behavior of the browser in the drag event of control
-    const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
-        e.preventDefault();
-    };
-
     return (
         <main>
             <SideMenu 
@@ -96,13 +80,13 @@ const App: React.FC = () => {
                 onSelectedItem={setCurrentConversation} 
                 onToggle={() => setSideMenu(!sideMenu)}/>
 
-            <Chat 
-                messages={messages} 
-                textBoxRef={textBoxRef}
-                attachedFile={file}
-                onSendMessage={handleSendMessage} 
-                onDrop={handleDrop} 
-                onDragOver={handleDragOver}/>
+            <DragZone onDropFile={setFile} validFiles={["plain"]}>
+                <Chat
+                    messages={messages}
+                    textBoxRef={textBoxRef}
+                    attachedFile={file}
+                    onSendMessage={handleSendMessage}/>
+            </DragZone>
         </main>
     )
 }

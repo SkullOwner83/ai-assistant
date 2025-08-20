@@ -1,29 +1,34 @@
-import React, { useState } from 'react'
+interface DragZoneprops{ 
+    children: React.ReactNode;
+    validFiles: Array<string>;
+    onDropFile: (file: File) => void;
+}
 
-export const DragZone = ()  => {
-    const [file, setFile] = useState<File | null>(null);
-    
+export const DragZone: React.FC<DragZoneprops> = ({ children, validFiles, onDropFile })  => {
     const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
         e.preventDefault();
 
         if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
-            setFile(e.dataTransfer.files[0]);
-            e.dataTransfer.clearData();
+            const file = e.dataTransfer.files[0];
+            const extension = file.type.split("/")[1];
+            console.log(extension)
+
+            if (validFiles.includes(extension)) {
+                onDropFile(e.dataTransfer.files[0]);
+                e.dataTransfer.clearData();
+            }
+            else {
+                alert("Archivo no válido.");
+            }
         }
-
-        alert(file)
     }
-
-    const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
-        e.preventDefault();
-    };
     
     return (
         <div 
             className="DragZone-Component"
-            onDragOver={handleDragOver} 
+            onDragOver={(e) => e.preventDefault()} 
             onDrop={handleDrop}>
-            drag_zone
+                {children}
         </div>
     )
 }

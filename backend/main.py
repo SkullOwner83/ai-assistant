@@ -50,18 +50,19 @@ async def ask(question: str = Form(...), conversation_id: Optional[int] = Form(.
 
     if file:
         document_chunks = await DatasetProcesator.chunk_file(file)
-        document_embedings = await embeddings.get_document_embeddings(document_chunks)
-        relevant_chunks = await embeddings.search(question, document_embedings, 0)
+        chunks_embedings = await embeddings.get_document_embeddings(document_chunks)
+
+        relevant_chunks = await embeddings.search(question, chunks_embedings, 0)
         context_text = ".\n".join(relevant_chunks)
 
-    content = f"Context: {context_text}\n\nQuestion: {question}" if context_text else f"question: {question}"
+    promp = f"Context: {context_text}\n\nQuestion: {question}" if context_text else f"question: {question}"
 
     response = openai.chat.completions.create(
         model='gpt-4o-mini',
         store=False,
         messages=[
             {'role': 'system', 'content': 'Eres un asistente'},
-            {'role': 'user', 'content': content}
+            {'role': 'user', 'content': promp}
         ]
     )
 

@@ -3,8 +3,15 @@ main {
     grid-template-columns: auto 1fr;
     height: 100dvh;
 
-    .Side-Menu { grid-column: 1; }
-    .Chat-Component { grid-column: 2; }
+    .SideMenu-Component { grid-column: 1; }
+    .DragZone-Component { 
+        grid-column: 2;
+        min-height: 0; 
+        
+        .Chat-Component {
+            height: 100%;
+        }
+    }
 }
 
 .Visible { visibility: visible; }

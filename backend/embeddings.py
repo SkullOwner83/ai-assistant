@@ -26,7 +26,7 @@ class Embeddings():
         for text in chunks:
             embedding = await self.get_embedding(text.page_content)
             embeddings_list.append({'text': text.page_content, 'embedding': embedding})
-
+ 
         return embeddings_list
 
     # Search the best matches for a given text in a list of texts and return the top N matches
