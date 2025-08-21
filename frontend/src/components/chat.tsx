@@ -1,4 +1,4 @@
-import React from 'react'
+import ReactMarkdown from 'react-markdown';
 import type { Message } from '../interfaces/message';
 
 interface ChatProps {
@@ -19,7 +19,9 @@ export const Chat: React.FC<ChatProps> = ({ messages, textBoxRef, attachedFile, 
                 <ul>
                     {messages.map((m, i) => (
                         <li key={i} className={m.messageFrom == "Client" ? "Client-Message" : "Server-Message"}>
-                            <div>{m.content}</div>
+                            <div>
+                                <ReactMarkdown children={m.content}/>
+                            </div>
                         </li>
                     ))}
                 </ul>
