@@ -1,6 +1,7 @@
 .Chat-Component {
     display: grid;
     grid-template-rows: 1fr auto;
+    background-color: #f9f8fd;
 
     .Messages-Container {
         grid-row: 1;
@@ -19,13 +20,13 @@
                 margin-bottom: 16px;
                 
 
-                &.Client-Message { justify-content: right; }
-                &.Server-Message { justify-content: left; }
+                &.Server-Message { 
+                    justify-content: left; 
+                }
 
-                div {
-                    background-color: rgb(230, 230, 230);
-                    border-radius: 8px;
-                    padding: 16px;
+                &.Client-Message { 
+                    justify-content: right; 
+                    div { background-color: #e8dbf6; padding: 16px; border-radius: 8px; }
                 }
             }
         }

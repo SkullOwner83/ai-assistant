@@ -1,17 +1,33 @@
 .SideMenu-Component {
     width: 300px;
-    background-color: rgb(230, 230, 230);
+    background-color: #e4e2eb;
     transition: 0.3s;
     overflow-y: auto;
 
     &.Hidden-Menu { width: 32px; }
+
+    .Title-Container {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 16px;
+        user-select: none;
+
+        .Isotype {
+            height: 30px;
+        }
+
+        .Logo {
+            height: 24px;
+        }
+    }
     
     button {
         width: 100%;
         height: 32px;
         text-align: left;
         font-size: 16px;
-        background-color: rgb(230, 230, 230);
+        background-color: inherit;
         padding: 0px 16px;
         border: 0px;
         white-space: nowrap;
@@ -20,10 +36,10 @@
         
         &:hover { 
             cursor: pointer; 
-            background-color: rgb(210, 210, 210);
+            background-color: #d4d1de;
         }
 
-        &.Active { background-color: rgb(200, 200, 200); }
+        &.Active { background-color: #b8b3c8; }
     }
 
     .Action-Buttons button {

@@ -12,7 +12,12 @@ interface SideMenuProp {
 export const SideMenu: React.FC<SideMenuProp> = ({ isOpen, items, selectedItem, onSelectedItem, onToggle }) => {
     return (
         <div className={`SideMenu-Component ${!isOpen ? "Hidden-Menu" : ""}`}>
-            <button className="Hidde-Button" onClick={()=> onToggle()}>-</button>
+            <div className="Title-Container">
+                <img src="ai-logo.svg" className="Isotype" draggable="false"/>
+                <img src="ai-assistant.svg" className="Logo" draggable="false"/>
+            </div>
+
+            {/* <button className="Hidde-Button" onClick={()=> onToggle()}>-</button> */}
 
             <ul className={!isOpen ? "Hidden" : ""}>
                 {items.map((item, index) => (
