@@ -45,8 +45,9 @@ async def get_messages(conversation_id: int, db: Session = Depends(open_coneccti
     return messages
 
 @app.post('/ask')
-async def ask(question: str = Form(...), conversation_id: Optional[int] = Form(...), file: Optional[UploadFile] = None, db: Session = Depends(open_conecction)):
+async def ask(question: str = Form(...), conversation_id: Optional[int] = Form(None), file: Optional[UploadFile] = None, db: Session = Depends(open_conecction)):
     context_text = None
+    conversation_created = None
 
     if file:
         document_chunks = await DatasetProcesator.chunk_file(file)
@@ -67,11 +68,11 @@ async def ask(question: str = Form(...), conversation_id: Optional[int] = Form(.
     )
 
     if not conversation_id:
-        conversation = Conversation(title=question[:50])
-        db.add(conversation)
+        conversation_created = Conversation(title=question[:50])
+        db.add(conversation_created)
         db.commit()
-        db.refresh(conversation)
-        conversation_id = conversation.idConversation
+        db.refresh(conversation_created)
+        conversation_id = conversation_created.idConversation
 
     answer = Message(
         messageFrom = 'Server',
@@ -91,5 +92,5 @@ async def ask(question: str = Form(...), conversation_id: Optional[int] = Form(.
     db.refresh(message)
     db.refresh(answer)
 
-    return answer
+    return { 'answer': answer, 'conversation': conversation_created.to_dict() }
 

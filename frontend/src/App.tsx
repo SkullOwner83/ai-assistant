@@ -36,7 +36,6 @@ const App: React.FC = () => {
         const get_messages = async () => {
             const response = await fetch(`http://localhost:8000/messages?conversation_id=${currentConversation.idConversation}`);
             const data = await response.json();
-            console.log(data);
             setMessages(data)
         }
 
@@ -67,7 +66,14 @@ const App: React.FC = () => {
             });
 
             const data = await response.json();
-            setMessages(prev => [...prev, data]);
+            setMessages(prev => [...prev, data.answer]);
+
+            // If a new chat was created, insert it into the list and set it as the current conversation
+            console.log(data.conversation)
+            if (data.conversation) {
+                setConversations(prev => [...prev, data.conversation]);
+                setCurrentConversation(data.conversation);
+            }
         }
     }
 
