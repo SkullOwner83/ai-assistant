@@ -43,13 +43,17 @@ export const SideMenu: React.FC<SideMenuProp> = ({ isOpen, items, selectedItem, 
     return (
         <div className={`SideMenu-Component ${!isOpen ? "Hidden-Menu" : ""}`}>
             <div className="Title-Container">
-                <img src="ai-logo.svg" className="Isotype" draggable="false"/>
-                <img src="ai-assistant.svg" className="Logo" draggable="false"/>
+                <div className="Logo-Container">
+                    <img src="ai-logo.svg" className="Isotype" draggable="false"/>
+                    <img src="ai-assistant.svg" className="Logo" draggable="false"/>
+                </div>
+
+                <button className="Hidde-Button" onClick={()=> onToggle()}>
+                    <img src="Side Menu.svg"/>
+                </button>
             </div>
 
-            {/* <button className="Hidde-Button" onClick={()=> onToggle()}>-</button> */}
-
-            <ul className={!isOpen ? "Hidden" : ""}>
+            <ul className="">
                 {items.map((item) => {
                     const showOptionsButton = menu.visible && menu.idItem == item.idConversation;
                     
@@ -68,7 +72,7 @@ export const SideMenu: React.FC<SideMenuProp> = ({ isOpen, items, selectedItem, 
                 })}
             </ul>
 
-            <div className={`Action-Buttons ${!isOpen ? "Hidden" : ""}`}>
+            <div className="Action-Buttons">
                 <button onClick={() => onSelectedItem(null)}>+</button>
             </div>
 
