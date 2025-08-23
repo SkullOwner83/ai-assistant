@@ -2,6 +2,7 @@ from ast import Pass
 import os
 from typing import List, Optional
 from sqlalchemy.orm import Session
+from sqlalchemy import delete
 from dotenv import load_dotenv
 from fastapi import FastAPI, Depends, Form, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
@@ -37,11 +38,15 @@ async def get_conversations(db: Session = Depends(open_conecction)):
     conversations = db.query(Conversation).all()
     return conversations
 
+@app.delete('/conversations')
+async def delete_conversations(conversation_id: int, db: Session = Depends(open_conecction)):
+    stmt = delete(Conversation).where(Conversation.idConversation == conversation_id)
+    db.execute(stmt)
+    db.commit()
 
 @app.get('/messages')
 async def get_messages(conversation_id: int, db: Session = Depends(open_conecction)):
     messages = db.query(Message).filter(Message.conversationId == conversation_id).all()
-    print(messages)
     return messages
 
 @app.post('/ask')
@@ -92,5 +97,5 @@ async def ask(question: str = Form(...), conversation_id: Optional[int] = Form(N
     db.refresh(message)
     db.refresh(answer)
 
-    return { 'answer': answer, 'conversation': conversation_created.to_dict() }
+    return { 'answer': answer, 'conversation': conversation_created }
 

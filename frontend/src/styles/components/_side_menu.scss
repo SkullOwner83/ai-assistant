@@ -46,13 +46,11 @@
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
-        background-color: transparent;
         cursor: pointer;
     }
 
     .Options-Button { 
         width: 32px;
-        object-fit: contain;
         padding: 4px;
 
         img {

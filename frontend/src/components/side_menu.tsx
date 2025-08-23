@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import type { Conversation } from '../interfaces/conversation'
 import type { ContextMenu } from '../interfaces/context_menu'
+import axios from 'axios'
 
 interface SideMenuProp {
     isOpen: boolean,
@@ -34,6 +35,11 @@ export const SideMenu: React.FC<SideMenuProp> = ({ isOpen, items, selectedItem, 
         })
     }
 
+    const handleDelete = async (conversation_id: string | undefined) => {
+        await axios.delete("http://localhost:8000/conversations", { params: { conversation_id: conversation_id }});
+        setMenu({visible: false, x: 0, y: 0});
+    }
+
     return (
         <div className={`SideMenu-Component ${!isOpen ? "Hidden-Menu" : ""}`}>
             <div className="Title-Container">
@@ -44,11 +50,11 @@ export const SideMenu: React.FC<SideMenuProp> = ({ isOpen, items, selectedItem, 
             {/* <button className="Hidde-Button" onClick={()=> onToggle()}>-</button> */}
 
             <ul className={!isOpen ? "Hidden" : ""}>
-                {items.map((item, index) => {
+                {items.map((item) => {
                     const showOptionsButton = menu.visible && menu.idItem == item.idConversation;
                     
                     return(
-                        <li key={index} className={`${selectedItem == item ? "Active" : ""} ${showOptionsButton ? "Hover" : ""}`}>
+                        <li key={item.idConversation} className={`${selectedItem == item ? "Active" : ""} ${showOptionsButton ? "Hover" : ""}`}>
                             <button onClick={()=> onSelectedItem(item)}>
                                 {item.title}
                             </button>
@@ -72,7 +78,7 @@ export const SideMenu: React.FC<SideMenuProp> = ({ isOpen, items, selectedItem, 
                 <li><button>Renombrar</button></li>
                 <li><button>Archivar</button></li>
                 <li><button>Descargar</button></li>
-                <li><button>Eliminar</button></li>
+                <li><button onClick={() => handleDelete(menu.idItem)}>Eliminar</button></li>
             </ul>
         </div>
     )

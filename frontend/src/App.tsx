@@ -6,6 +6,7 @@ import { SideMenu } from './components/side_menu';
 import { Chat } from './components/chat';
 import { DragZone } from './components/drag_zone';
 import './styles/styles.scss'
+import axios from 'axios';
 
 const App: React.FC = () => {
     const [sideMenu, setSideMenu] = useState(true);
@@ -15,12 +16,11 @@ const App: React.FC = () => {
     const [file, setFile] = useState<File | null>(null);
     const textBoxRef = useRef<HTMLInputElement>(null);
 
-    // Load conversations from the database
+    // Load conversations from the database on startup
     useEffect(() => {
         const get_conversations = async () => {
-            const response = await fetch('http://localhost:8000/conversations');
-            const data = await response.json();
-            setConversations(data);
+            const response = await axios.get('http://localhost:8000/conversations');
+            setConversations(response.data);
         }
 
         get_conversations();
@@ -34,9 +34,11 @@ const App: React.FC = () => {
         }
 
         const get_messages = async () => {
-            const response = await fetch(`http://localhost:8000/messages?conversation_id=${currentConversation.idConversation}`);
-            const data = await response.json();
-            setMessages(data)
+            const response = await axios.get("http://localhost:8000/messages", {
+                params: { conversation_id: currentConversation.idConversation }
+            });
+
+            setMessages(response.data);
         }
 
         get_messages();
@@ -60,16 +62,11 @@ const App: React.FC = () => {
             setMessages(prev => [...prev, newMessage]);
             textBoxRef.current.value = "";
 
-            const response = await fetch('http://localhost:8000/ask', {
-                method: 'POST',
-                body: formData
-            });
-
-            const data = await response.json();
+            const response = await axios.post("http://localhost:8000/ask", formData);
+            const data = response.data
             setMessages(prev => [...prev, data.answer]);
 
             // If a new chat was created, insert it into the list and set it as the current conversation
-            console.log(data.conversation)
             if (data.conversation) {
                 setConversations(prev => [...prev, data.conversation]);
                 setCurrentConversation(data.conversation);
