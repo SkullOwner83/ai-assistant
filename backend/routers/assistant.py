@@ -1,11 +1,11 @@
 import os
 from typing import Optional
 from openai import OpenAI
-from embeddings import Embeddings
-from fastapi import APIRouter, Depends, Form, HTTPException, UploadFile
+from services.embeddings import Embeddings
+from fastapi import APIRouter, Depends, Form, UploadFile
 from sqlalchemy.orm import Session
-from database import open_connection
-from dataset_procesator import DatasetProcesator
+from infraestructure.database import open_connection
+from services.dataset_procesator import DatasetProcesator
 from models.conversation import Conversation
 from models.message import Message
 

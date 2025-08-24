@@ -1,9 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from dotenv import load_dotenv
-from routers import messages
-from routers import conversations
-from routers import assistant
+from routers import *
 
 load_dotenv()
 app = FastAPI()

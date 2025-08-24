@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy import exists
 from sqlalchemy.orm import Session
 from models.conversation import Conversation
-from database import open_connection
+from infraestructure.database import open_connection
 from models.message import Message
 
 router = APIRouter(
