@@ -1,6 +1,5 @@
 import os
 from typing import Optional
-from dotenv import load_dotenv
 from openai import OpenAI
 from embeddings import Embeddings
 from fastapi import APIRouter, Depends, Form, HTTPException, UploadFile
@@ -10,11 +9,9 @@ from dataset_procesator import DatasetProcesator
 from models.conversation import Conversation
 from models.message import Message
 
-
-load_dotenv()
-API_KEY = os.getenv('OPENAI_API_KEY')
-openai = OpenAI(api_key=API_KEY)
-embeddings = Embeddings(openai)
+API_KEY = os.getenv('OPENAI_KEY')
+client = OpenAI(api_key=API_KEY)
+embeddings = Embeddings(client)
 
 router = APIRouter(
     prefix="/assistant",
@@ -25,7 +22,6 @@ router = APIRouter(
 async def ask(question: str = Form(...), conversation_id: Optional[int] = Form(None), file: Optional[UploadFile] = None, db: Session = Depends(open_connection)):
     context_text = None
     conversation_created = None
-    print(API_KEY)
 
     if file:
         document_chunks = await DatasetProcesator.chunk_file(file)
@@ -36,13 +32,10 @@ async def ask(question: str = Form(...), conversation_id: Optional[int] = Form(N
 
     promp = f"Context: {context_text}\n\nQuestion: {question}" if context_text else f"question: {question}"
 
-    response = openai.chat.completions.create(
+    response = client.responses.create(
         model='gpt-4o-mini',
-        store=False,
-        messages=[
-            {'role': 'system', 'content': 'Eres un asistente'},
-            {'role': 'user', 'content': promp}
-        ]
+        instructions='Eres un asistente virtual.',
+        input=[{"role": "user", "content": promp}]
     )
 
     if not conversation_id:
@@ -54,7 +47,7 @@ async def ask(question: str = Form(...), conversation_id: Optional[int] = Form(N
 
     answer = Message(
         messageFrom = 'Server',
-        content = response.choices[0].message.content,
+        content = response.output[0].content[0].text,
         conversationId = conversation_id
     )
 
