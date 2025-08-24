@@ -17,7 +17,7 @@ engine = create_engine(DB_URL, echo=True)
 SessionLocal = sessionmaker(bind=engine, autoflush=False)
 Base = declarative_base()
 
-def open_conecction():
+def open_connection():
     db = SessionLocal()
 
     try:

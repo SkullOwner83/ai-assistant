@@ -48,12 +48,12 @@ export const SideMenu: React.FC<SideMenuProp> = ({ isOpen, items, selectedItem, 
                     <img src="ai-assistant.svg" className="Logo" draggable="false"/>
                 </div>
 
-                <button className="Hidde-Button" onClick={()=> onToggle()}>
+                <button className="Hide-Button" onClick={()=> onToggle()}>
                     <img src="Side Menu.svg"/>
                 </button>
             </div>
 
-            <ul className="">
+            <ul className="List-Container">
                 {items.map((item) => {
                     const showOptionsButton = menu.visible && menu.idItem == item.idConversation;
                     

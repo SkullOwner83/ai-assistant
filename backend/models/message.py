@@ -8,10 +8,5 @@ class Message(Base):
     messageFrom = Column(String(255))
     content = Column(Text)
 
-    def to_dict(self):
-        return {
-            "idMessage": self.idMessage,
-            "conversationId": self.conversationId,
-            "messageFrom": self.messageFrom,
-            "content": self.content
-        }
+    class Config:
+        orm_mode = True

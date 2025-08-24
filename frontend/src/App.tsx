@@ -62,7 +62,7 @@ const App: React.FC = () => {
             setMessages(prev => [...prev, newMessage]);
             textBoxRef.current.value = "";
 
-            const response = await axios.post("http://localhost:8000/ask", formData);
+            const response = await axios.post("http://localhost:8000/assistant", formData);
             const data = response.data
             setMessages(prev => [...prev, data.answer]);
 
