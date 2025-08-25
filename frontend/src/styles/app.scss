@@ -15,4 +15,8 @@ main {
 }
 
 .Visible { visibility: visible; }
-.Hidden { visibility: hidden; }
+.Hidden { visibility: collapse; }
+
+::selection {
+    background-color: antiquewhite;
+}

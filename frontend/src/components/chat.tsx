@@ -29,7 +29,7 @@ export const Chat: React.FC<ChatProps> = ({ messages, textBoxRef, attachedFile, 
 
             <div className="TextBox-Container">
                 <div className="Input-Wrapper">
-                    <img src="clip.png" className={attachedFile? "Visible" : ""}/>
+                    <img src="clip.png" className={attachedFile? "Visible" : ""} alt="Icono de archivo adjuntado."/>
                     <input type="text" placeholder="Pregunta lo que quieras..." ref={textBoxRef} onKeyDown={handleSendMessage}/>
                 </div>
             </div>

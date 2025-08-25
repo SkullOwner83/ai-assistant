@@ -44,13 +44,21 @@ export const SideMenu: React.FC<SideMenuProp> = ({ isOpen, items, selectedItem, 
         <div className={`SideMenu-Component ${!isOpen ? "Hidden-Menu" : ""}`}>
             <div className="Title-Container">
                 <div className="Logo-Container">
-                    <img src="ai-logo.svg" className="Isotype" draggable="false"/>
-                    <img src="ai-assistant.svg" className="Logo" draggable="false"/>
+                    <img src="ai-logo.svg" className="Isotype" draggable="false" alt="AI Assistant isotipo."/>
+                    <img src="ai-assistant.svg" className="Logo" draggable="false" alt="AI Assistant logotipo"/>
                 </div>
 
                 <button className="Hide-Button" onClick={()=> onToggle()}>
-                    <img src="Side Menu.svg"/>
+                    <img src="Side Menu.svg" draggable="false" alt="Boton para ocultar menu."/>
                 </button>
+            </div>
+
+            <div className="Action-Buttons">
+                <button onClick={() => onSelectedItem(null)}>
+                    <img src="New.svg"/>
+                    <p>Nueva conversación</p>
+                </button>
+                <hr/>
             </div>
 
             <ul className="List-Container">
@@ -65,16 +73,12 @@ export const SideMenu: React.FC<SideMenuProp> = ({ isOpen, items, selectedItem, 
 
                             <button className={`Options-Button ${showOptionsButton ? "Visible": "Hidden"}`}
                                     onClick={(e) => { handleContextMenu(e, item.idConversation) }}>
-                                <img src="options.svg"/>
+                                <img src="options.svg" alt="Boton para desplegar opciones."/>
                             </button>
                         </li>
                     )
                 })}
             </ul>
-
-            <div className="Action-Buttons">
-                <button onClick={() => onSelectedItem(null)}>+</button>
-            </div>
 
             <ul className={`Context-Menu ${menu.visible ? "Visible" : "Hidden"}`} 
                 style={{top: menu.y, left: menu.x}}
