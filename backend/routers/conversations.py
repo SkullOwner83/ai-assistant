@@ -17,7 +17,7 @@ async def get_conversations(db: Session = Depends(open_connection)):
 
     return conversations
 
-@router.delete('/{conversation_id}')
+@router.delete('/')
 async def delete_conversations(conversation_id: int, db: Session = Depends(open_connection)):
     conversation = db.query(Conversation).filter(Conversation.idConversation == conversation_id).first()
     
