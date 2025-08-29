@@ -74,15 +74,23 @@ const App: React.FC = () => {
         }
     }
 
+    const removeConversation = (conversationId: string) => {
+        setConversations(prev => prev.filter(i => i.idConversation !== conversationId));
+        
+        if (currentConversation?.idConversation == conversationId) {
+            setCurrentConversation(null);
+        }
+    }
+
     return (
         <main>
-            <SideMenu 
-                isOpen={sideMenu} 
-                items={conversations} 
-                selectedItem={currentConversation} 
-                onSelectedItem={setCurrentConversation} 
+            <SideMenu
+                isOpen={sideMenu}
+                items={conversations}
+                selectedItem={currentConversation}
+                onSelectedItem={setCurrentConversation}
+                onRemoveConversation={(c) => removeConversation(c.idConversation)}
                 onToggle={() => setSideMenu(!sideMenu)}/>
-
             <DragZone onDropFile={setFile} validFiles={["plain"]}>
                 <Chat
                     messages={messages}
