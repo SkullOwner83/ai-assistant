@@ -56,10 +56,12 @@
         height: 100%;
         flex: 1;
         overflow-y: auto;
+        user-select: none;
 
         li {
             display: grid;
             grid-template-columns: 1fr auto;
+            animation: Button-Appears 0.5s ease forwards;
 
             &.Active { background-color: #c7b8d6; }
 
@@ -106,15 +108,15 @@
     }
 
     .Context-Menu {
-        background-color: white;
+        background-color: $SurfaceColor;
         position: absolute;
         overflow: hidden;
         border-radius: 8px;
         min-width: 150px;
         transform: scaleY(0);
         transform-origin: top;
-        transition: transform 0.1s;
-        filter: drop-shadow(0px 4px 4px rgba(black, 0.1));
+        transition: transform 0.2s;
+        filter: $Shadow;
 
         &.Visible { transform: scaleY(1); }
         button:hover { background-color: #e4e2eb; }
@@ -124,9 +126,10 @@
         display: flex;
         flex-direction: column;
         align-items: center;
-        min-width: 480px;
+        text-align: center;
+        max-width: 480px;
         padding: 32px;
-        background-color: white;
+        background-color: $SurfaceColor;
         border-radius: 16px;
 
         p { margin-bottom: 32px; }
@@ -134,12 +137,12 @@
         .Modal-Buttons {
             display: flex;
             justify-content: center;
-            gap: 8px;
+            gap: 16px;
             width: 100%;
             
             button {
-                width: auto;
-                background-color: gray;
+                @include Outlined-Button();
+                &.Delete-Button { @include Button-Control($ErrorColor, $OnErrorColor) }
             }
         }
     }
@@ -148,12 +151,12 @@
 hr { 
     height: 2px; 
     margin: 8px 16px;
-    background-color: rgb(210, 210, 210);
+    background-color: $BorderColor;
     border: 0;
     border-radius: 50px;
 }
 
 @keyframes Button-Appears {
-    0% { opacity: 0;}
-    100% { opacity: 1; }
+    0% { opacity: 0; transform: translateX(-16px); }
+    100% { opacity: 1; transform: translateX(0); }
 }

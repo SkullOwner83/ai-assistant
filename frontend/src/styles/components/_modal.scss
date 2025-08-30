@@ -3,8 +3,23 @@
     position: fixed;
     justify-content: center;
     align-items: center;
+    background-color: transparent;
     width: 100%;
     height: 100%;
-    background-color: rgba(black, 0.8);
     z-index: 1000;
+    transition: 0.3s;
+    opacity: 1;
+
+    .Modal-Content { 
+        transform: scale(0); 
+        transition: 0.3s;
+    }
+
+    &.Visible { 
+        background-color: rgba(black, 0.6);
+
+        .Modal-Content {
+            transform: scale(1);
+        }
+    }
 }

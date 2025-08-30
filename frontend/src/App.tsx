@@ -74,12 +74,34 @@ const App: React.FC = () => {
         }
     }
 
-    const removeConversation = (conversationId: string) => {
-        setConversations(prev => prev.filter(i => i.idConversation !== conversationId));
+    const DeleteConversation = async (conversation: Conversation) => {
+        const response = await axios.delete("http://localhost:8000/conversations", { params: { conversation_id: conversation.idConversation }});
+
+        if (response.status === 200) {
+            setConversations(prev => prev.filter(i => i.idConversation !== conversation.idConversation));
         
-        if (currentConversation?.idConversation == conversationId) {
-            setCurrentConversation(null);
+            if (currentConversation?.idConversation == conversation.idConversation) {
+                setCurrentConversation(null);
+            }
         }
+    }
+
+    const RenameConversation = async (conversation: Conversation, newTitle: string) => {
+        const updated = { ...conversation, title: newTitle };
+        const response = await axios.put("http://localhost:8000/conversations", updated);
+        
+        if (response.status === 200) {
+            setConversations(prev => 
+                prev.map(c => (c.idConversation === conversation.idConversation ? { ...c, title: newTitle } : c))
+            );
+
+            // setCurrentConversation(prev =>
+            //     prev && prev.idConversation === conversation.idConversation
+            //         ? { ...prev, title: newTitle }
+            //         : prev
+            // );
+        }
+
     }
 
     return (
@@ -89,7 +111,8 @@ const App: React.FC = () => {
                 items={conversations}
                 selectedItem={currentConversation}
                 onSelectedItem={setCurrentConversation}
-                onRemoveConversation={(c) => removeConversation(c.idConversation)}
+                onDeleteConversation={(c) => DeleteConversation(c)}
+                onRenameConversation={RenameConversation}
                 onToggle={() => setSideMenu(!sideMenu)}/>
             <DragZone onDropFile={setFile} validFiles={["plain"]}>
                 <Chat
