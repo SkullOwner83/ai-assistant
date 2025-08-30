@@ -6,5 +6,8 @@ class Conversation(Base):
     idConversation = Column(Integer, primary_key=True, index=True)
     title = Column(String(255))
 
-    class Config:
-        orm_mode = True
+    def to_dict(self):
+        return {
+            "idConversation": self.idConversation,
+            "title": self.title,
+        }

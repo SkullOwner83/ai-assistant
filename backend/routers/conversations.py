@@ -8,6 +8,12 @@ router = APIRouter(
     tags=["conversations"]
 )
 
+from pydantic import BaseModel
+
+class ConversationUpdate(BaseModel):
+    idConversation: int
+    title: str
+
 @router.get('/')
 async def get_conversations(db: Session = Depends(open_connection)):
     conversations = db.query(Conversation).all()
@@ -17,12 +23,23 @@ async def get_conversations(db: Session = Depends(open_connection)):
 
     return conversations
 
+@router.put('/')
+async def update_conversation(conversation: ConversationUpdate, db: Session = Depends(open_connection)):
+    db_conversation = db.query(Conversation).filter(Conversation.idConversation == conversation.idConversation).first()
+
+    if not db_conversation:
+        raise HTTPException(status_code=404, detail='The conversation was not found.')
+    
+    db_conversation.title = conversation.title
+    db.commit()
+    db.refresh(db_conversation)
+
 @router.delete('/')
 async def delete_conversations(conversation_id: int, db: Session = Depends(open_connection)):
     conversation = db.query(Conversation).filter(Conversation.idConversation == conversation_id).first()
     
     if not conversation:
-        raise HTTPException(status_code=404, detail="Conversation not found.")
+        raise HTTPException(status_code=404, detail="The conversation was not found.")
 
     db.delete(conversation)
     db.commit()

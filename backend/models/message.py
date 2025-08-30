@@ -7,6 +7,3 @@ class Message(Base):
     conversationId = Column(Integer, ForeignKey('conversations.idConversation'))
     messageFrom = Column(String(255))
     content = Column(Text)
-
-    class Config:
-        orm_mode = True

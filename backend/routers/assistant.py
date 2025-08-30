@@ -38,4 +38,4 @@ async def ask(question: str = Form(...), conversation_id: Optional[int] = Form(N
 
     chat_service.create_message(question, 'Client', conversation_id, db_session)
     answer = chat_service.create_message(response, 'Server', conversation_id, db_session)
-    return { 'answer': answer, 'conversation': conversation_created }
+    return { 'answer': answer, 'conversation': conversation_created.to_dict() }
