@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react'
 import type { Conversation } from '../interfaces/conversation'
 import type { ContextMenu } from '../interfaces/context_menu'
 import { Modal } from './modal'
-import axios from 'axios'
 import { EditableLabel } from './editable_label'
 
 interface SideMenuProp {
@@ -12,10 +11,20 @@ interface SideMenuProp {
     onSelectedItem?: (item: Conversation | null) => void,
     onDeleteConversation?: (item: Conversation) => void,
     onRenameConversation?: (item: Conversation, newTitle: string) => void,
+    onDownloadConversation?: (item: Conversation) => void,
     onToggle?: () => void
 }
 
-export const SideMenu: React.FC<SideMenuProp> = ({ isOpen, items, selectedItem, onSelectedItem, onDeleteConversation, onRenameConversation, onToggle }) => {
+export const SideMenu: React.FC<SideMenuProp> = ({ 
+    isOpen, 
+    items, 
+    selectedItem, 
+    onSelectedItem, 
+    onDeleteConversation, 
+    onRenameConversation, 
+    onDownloadConversation,
+    onToggle 
+}) => {
     const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
     const [modalContent, setModalContent] = useState<React.ReactNode>(null);
     const [editingConversationId, setEditingConversationId] = useState<string | null>(null);
@@ -92,8 +101,8 @@ export const SideMenu: React.FC<SideMenuProp> = ({ isOpen, items, selectedItem, 
                 onClick={(e) => e.stopPropagation()}>
                 <li>
                     <button onClick={() => { 
-                        setMenu({visible: false, x: 0, y: 0});
                         setEditingConversationId(null);
+                        setMenu({visible: false, x: 0, y: 0});
                         setTimeout(() => setEditingConversationId(menu.conversation!.idConversation), 0);
                     }}>
                         Renombrar
@@ -101,7 +110,14 @@ export const SideMenu: React.FC<SideMenuProp> = ({ isOpen, items, selectedItem, 
                 </li>
 
                 <li><button>Archivar</button></li>
-                <li><button>Descargar</button></li>
+
+                <li><button onClick={() => {
+                    if (menu.conversation) {
+                        onDownloadConversation?.(menu.conversation)
+                        setMenu({visible: false, x: 0, y: 0});
+                    }
+                }}>Descargar</button></li>
+                
                 <li><button onClick={() => {
                     setIsModalOpen(true);
                     setModalContent(

@@ -91,18 +91,37 @@ const App: React.FC = () => {
         const response = await axios.put("http://localhost:8000/conversations", updated);
         
         if (response.status === 200) {
-            setConversations(prev => 
-                prev.map(c => (c.idConversation === conversation.idConversation ? { ...c, title: newTitle } : c))
+            setConversations(prev =>
+                prev.map(c => {
+                    if (c.idConversation === conversation.idConversation) {
+                        c.title = newTitle;
+                    }
+
+                    return c;
+                })
             );
-
-            // setCurrentConversation(prev =>
-            //     prev && prev.idConversation === conversation.idConversation
-            //         ? { ...prev, title: newTitle }
-            //         : prev
-            // );
         }
-
     }
+
+    const DownloadConversation = async(conversation: Conversation) => {
+            try {
+                const response = await axios.get("http://localhost:8000/conversations/download", {
+                    params: { conversation_id: conversation.idConversation },
+                    responseType: "blob"
+                });
+
+                const url = window.URL.createObjectURL(new Blob([response.data]));
+                const link = document.createElement("a");
+                link.href = url;
+                link.setAttribute("Download", `${conversation.title}.txt`);
+                document.body.appendChild(link);
+                link.click();
+                link.remove();
+            }
+            catch(error) {
+                console.error("Error descargando archivo:", error);
+            }
+        }
 
     return (
         <main>
@@ -113,6 +132,7 @@ const App: React.FC = () => {
                 onSelectedItem={setCurrentConversation}
                 onDeleteConversation={(c) => DeleteConversation(c)}
                 onRenameConversation={RenameConversation}
+                onDownloadConversation={DownloadConversation}
                 onToggle={() => setSideMenu(!sideMenu)}/>
             <DragZone onDropFile={setFile} validFiles={["plain"]}>
                 <Chat
