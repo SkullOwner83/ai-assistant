@@ -9,7 +9,7 @@ class ChatService():
         db_session.commit()
         db_session.refresh(new_conversation)
         return new_conversation
-    
+
     def create_message(self, message: str, message_from: str, conversation_id: int, db_session: Session) -> Message:
         new_message = Message(
             messageFrom = message_from,
