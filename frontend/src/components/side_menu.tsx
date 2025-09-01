@@ -79,10 +79,17 @@ export const SideMenu: React.FC<SideMenuProp> = ({
                     
                     return(
                         <li key={item.idConversation} className={`${selectedItem == item ? "Active" : ""} ${showOptionsButton ? "Hover" : ""}`}>
-                            <button onClick={()=> onSelectedItem?.(item)}>
+                            <button onClick={() => {
+                                if (editingConversationId !== item.idConversation) {
+                                    onSelectedItem?.(item);
+                                }
+                            }}>
                                 <EditableLabel
                                     isEditable={editingConversationId == item.idConversation ? true : false}
-                                    onTextChanged={(t) => onRenameConversation?.(item, t)}>
+                                    onTextChanged={(t) => {
+                                        onRenameConversation?.(item, t);
+                                        setEditingConversationId(null);
+                                    }}>
                                     {item.title}
                                 </EditableLabel>
                             </button>
@@ -98,25 +105,22 @@ export const SideMenu: React.FC<SideMenuProp> = ({
 
             <ul className={`Context-Menu ${menu.visible ? "Visible" : "Hidden"}`} 
                 style={{top: menu.y, left: menu.x}}
-                onClick={(e) => e.stopPropagation()}>
-                <li>
-                    <button onClick={() => { 
-                        setEditingConversationId(null);
-                        setMenu({visible: false, x: 0, y: 0});
-                        setTimeout(() => setEditingConversationId(menu.conversation!.idConversation), 0);
-                    }}>
-                        Renombrar
-                    </button>
-                </li>
+                onClick={(e) => { e.stopPropagation(); setMenu({visible: false, x: 0, y: 0}) }}>
+                <li><button onClick={() => {
+                    setEditingConversationId(prev =>
+                        prev === menu.conversation!.idConversation ? null : menu.conversation!.idConversation
+                    );
+                }}>
+                    Renombrar
+                </button></li>
 
                 <li><button>Archivar</button></li>
 
                 <li><button onClick={() => {
-                    if (menu.conversation) {
-                        onDownloadConversation?.(menu.conversation)
-                        setMenu({visible: false, x: 0, y: 0});
-                    }
-                }}>Descargar</button></li>
+                    if (menu.conversation) onDownloadConversation?.(menu.conversation)
+                }}>
+                    Descargar
+                </button></li>
                 
                 <li><button onClick={() => {
                     setIsModalOpen(true);
@@ -128,15 +132,14 @@ export const SideMenu: React.FC<SideMenuProp> = ({
                             <div className="Modal-Buttons">
                                 <button onClick={() => setIsModalOpen(false)}>Cancelar</button>
                                 <button 
-                                    className="Delete-Button" 
+                                    className="Delete-Button"
                                     onClick={() => {
                                         if (menu.conversation) {
                                             onDeleteConversation?.(menu.conversation);
-                                            setMenu({visible: false, x: 0, y: 0});
                                             setIsModalOpen(false);
                                         }
                                     }}>
-                                    <span>Confirmar</span>
+                                    Confirmar
                                 </button>
                             </div>
                         </div>

@@ -39,9 +39,7 @@ export const EditableLabel: React.FC<EditableLabel> = ({ children, isEditable, o
             }
         }
 
-        if (e.key === "Escape") {
-            setEditable(false);
-        }
+        if (e.key === "Escape" || e.key === "Tab") setEditable(false);
     }
 
     return (

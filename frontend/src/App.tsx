@@ -34,11 +34,15 @@ const App: React.FC = () => {
         }
 
         const get_messages = async () => {
-            const response = await axios.get("http://localhost:8000/messages", {
-                params: { conversation_id: currentConversation.idConversation }
-            });
+            try {
+                const response = await axios.get("http://localhost:8000/messages", {
+                    params: { conversation_id: currentConversation.idConversation }
+                });
 
-            setMessages(response.data);
+                setMessages(response.data);
+            } catch(error) {
+                console.error("Error al cargar las conversaciones: ", error);
+            }
         }
 
         get_messages();
@@ -62,44 +66,58 @@ const App: React.FC = () => {
             setMessages(prev => [...prev, newMessage]);
             textBoxRef.current.value = "";
 
-            const response = await axios.post("http://localhost:8000/assistant", formData);
-            const data = response.data
-            setMessages(prev => [...prev, data.answer]);
+            try {
+                const response = await axios.post("http://localhost:8000/assistant", formData);
+                const data = response.data
+                setMessages(prev => [...prev, data.answer]);
 
-            // If a new chat was created, insert it into the list and set it as the current conversation
-            if (data.conversation) {
-                setConversations(prev => [...prev, data.conversation]);
-                setCurrentConversation(data.conversation);
+                // If a new chat was created, insert it into the list and set it as the current conversation
+                if (data.conversation) {
+                    setConversations(prev => [...prev, data.conversation]);
+                    setCurrentConversation(data.conversation);
+                }
+            } catch(error) {
+                console.error("Error al enviar el mensaje: ", error);
             }
         }
     }
 
     const DeleteConversation = async (conversation: Conversation) => {
-        const response = await axios.delete("http://localhost:8000/conversations", { params: { conversation_id: conversation.idConversation }});
+        try {
+            const response = await axios.delete("http://localhost:8000/conversations", { 
+                params: { conversation_id: conversation.idConversation }
+            });
 
-        if (response.status === 200) {
-            setConversations(prev => prev.filter(i => i.idConversation !== conversation.idConversation));
+            if (response.status === 200) {
+                setConversations(prev => prev.filter(i => i.idConversation !== conversation.idConversation));
         
-            if (currentConversation?.idConversation == conversation.idConversation) {
-                setCurrentConversation(null);
+                if (currentConversation?.idConversation == conversation.idConversation) {
+                    setCurrentConversation(null);
+                }
             }
+        } catch(error) {
+            console.error("Error al eliminar la conversación: ", error);
         }
     }
 
     const RenameConversation = async (conversation: Conversation, newTitle: string) => {
-        const updated = { ...conversation, title: newTitle };
-        const response = await axios.put("http://localhost:8000/conversations", updated);
-        
-        if (response.status === 200) {
-            setConversations(prev =>
-                prev.map(c => {
-                    if (c.idConversation === conversation.idConversation) {
-                        c.title = newTitle;
-                    }
+        try {
+            const updated = { ...conversation, title: newTitle };
+            const response = await axios.put("http://localhost:8000/conversations", updated);
 
-                    return c;
-                })
-            );
+            if (response.status === 200) {
+                setConversations(prev =>
+                    prev.map(c => {
+                        if (c.idConversation === conversation.idConversation) {
+                            c.title = newTitle;
+                        }
+
+                        return c;
+                    })
+                );
+            } 
+        } catch(error) {
+            console.error("Error al renombrar el archivo: ", error);
         }
     }
 
@@ -119,7 +137,7 @@ const App: React.FC = () => {
                 link.remove();
             }
             catch(error) {
-                console.error("Error descargando archivo:", error);
+                console.error("Error descargando archivo: ", error);
             }
         }
 
