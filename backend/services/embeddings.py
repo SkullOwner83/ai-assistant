@@ -1,23 +1,38 @@
 from typing import List
 from openai import OpenAI
+import torch
 from numpy import dot
 from numpy.linalg import norm
 from langchain.docstore.document import Document
+from transformers import AutoTokenizer, AutoModel
 
 class Embeddings():
     def __init__(self, openai: OpenAI):
         self.openai = openai
+        model = 'sentence-transformers/distiluse-base-multilingual-cased-v2'
+        self.model = AutoModel.from_pretrained(model)
+        self.tokenizer = AutoTokenizer.from_pretrained(model)
 
     # Generate the vector representation of a text to be used as input to the model
     async def get_embedding(self, text: str) -> List[float]:
         text = text.replace('\n', ' ')
-        embeddings = self.openai.embeddings.create(
-            model='text-embedding-3-small',
-            input=text,
-            encoding_format='float'
-        )
+        inputs = self.tokenizer(text, return_tensors="pt", padding=True, truncation=True)
 
-        return embeddings.data[0].embedding
+        with torch.no_grad():
+            outputs = self.model(**inputs)
+
+        embedding = outputs.last_hidden_state.mean(dim=1)
+        vector = embedding.squeeze().numpy()
+        return vector
+    
+        # text = text.replace('\n', ' ')
+        # embeddings = self.openai.embeddings.create(
+        #     model='text-embedding-3-small',
+        #     input=text,
+        #     encoding_format='float'
+        # )
+
+        # return embeddings.data[0].embedding
     
     # Generate a file with the vector representation of a text to be used as input to the model
     async def get_document_embeddings(self, chunks: List[Document]) -> List[dict[str, float]]:

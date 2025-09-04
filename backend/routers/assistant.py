@@ -1,5 +1,7 @@
 import os
 from typing import Optional
+
+from soundcloud import Conversation
 from services.embeddings import Embeddings
 from fastapi import APIRouter, Depends, Form, UploadFile
 from sqlalchemy.orm import Session
@@ -27,15 +29,16 @@ async def ask(question: str = Form(...), conversation_id: Optional[int] = Form(N
         document_chunks = await DatasetProcesator.chunk_file(file)
         chunks_embeddings = await embeddings.get_document_embeddings(document_chunks)
         relevant_chunks = await embeddings.search(question, chunks_embeddings, 0)
-        context_text = ".\n".join(relevant_chunks)
+        context_text = relevant_chunks[0]
 
-    prompt = f"Context: {context_text}\n\nQuestion: {question}" if context_text else f"question: {question}"
-    response = await ai_client.ask(prompt)
+    #prompt = f"Context: {context_text}\n\nQuestion: {question}" if context_text else f"question: {question}"
+    #response = await ai_client.ask(prompt)
+    response = context_text
 
     if not conversation_id:
         conversation_created = chat_service.create_conversation(question[:50], db_session)
-        conversation_created = conversation_created.to_dict()
         conversation_id = conversation_created.idConversation
+        conversation_created = conversation_created.to_dict()
 
     chat_service.create_message(question, 'Client', conversation_id, db_session)
     answer = chat_service.create_message(response, 'Server', conversation_id, db_session)
