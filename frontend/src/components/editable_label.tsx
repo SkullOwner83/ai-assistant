@@ -3,10 +3,11 @@ import { useEffect, useRef, useState } from "react";
 interface EditableLabel {
     children: string,
     isEditable: boolean,
-    onTextChanged?: (newText: string) => void
+    onTextChanged?: (newText: string) => void,
+    onCancel?: () => void
 }
 
-export const EditableLabel: React.FC<EditableLabel> = ({ children, isEditable, onTextChanged }) => {
+export const EditableLabel: React.FC<EditableLabel> = ({ children, isEditable, onTextChanged, onCancel }) => {
     const [editable, setEditable] = useState<boolean>(false);
     const textBoxRef = useRef<HTMLInputElement | null>(null);
     useEffect(() => { setEditable(isEditable); }, [isEditable]);
@@ -15,11 +16,13 @@ export const EditableLabel: React.FC<EditableLabel> = ({ children, isEditable, o
         const handleClickOutside = (e: MouseEvent) => {
             if (editable && textBoxRef.current && !textBoxRef.current.contains(e.target as Node)) {
                 setEditable(false);
+                onCancel?.();
             }
         }
+
         document.addEventListener("mousedown", handleClickOutside);
         return () => document.removeEventListener("mousedown", handleClickOutside);
-    }, [editable]);
+    }, [editable, onCancel]);
 
     useEffect(() => {
         if (editable && textBoxRef.current) {
@@ -39,7 +42,10 @@ export const EditableLabel: React.FC<EditableLabel> = ({ children, isEditable, o
             }
         }
 
-        if (e.key === "Escape" || e.key === "Tab") setEditable(false);
+        if (e.key === "Escape" || e.key === "Tab") {
+            setEditable(false);
+            onCancel?.();
+        }
     }
 
     return (

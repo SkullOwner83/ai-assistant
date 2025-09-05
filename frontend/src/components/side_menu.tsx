@@ -86,10 +86,12 @@ export const SideMenu: React.FC<SideMenuProp> = ({
                             }}>
                                 <EditableLabel
                                     isEditable={editingConversationId == item.idConversation ? true : false}
+                                    onCancel={() => setEditingConversationId(null)}
                                     onTextChanged={(t) => {
                                         onRenameConversation?.(item, t);
                                         setEditingConversationId(null);
-                                    }}>
+                                    }}
+                                >
                                     {item.title}
                                 </EditableLabel>
                             </button>
@@ -107,9 +109,9 @@ export const SideMenu: React.FC<SideMenuProp> = ({
                 style={{top: menu.y, left: menu.x}}
                 onClick={(e) => { e.stopPropagation(); setMenu({visible: false, x: 0, y: 0}) }}>
                 <li><button onClick={() => {
-                    setEditingConversationId(prev =>
-                        prev === menu.conversation!.idConversation ? null : menu.conversation!.idConversation
-                    );
+                    if (menu.conversation) { 
+                        setEditingConversationId(menu.conversation.idConversation);
+                    }
                 }}>
                     Renombrar
                 </button></li>
