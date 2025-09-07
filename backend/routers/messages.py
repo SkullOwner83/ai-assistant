@@ -1,17 +1,19 @@
-from fastapi import APIRouter, Depends, HTTPException
+from typing import List
+from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy import exists
 from sqlalchemy.orm import Session
 from models.conversation import Conversation
 from infraestructure.database import open_connection
 from models.message import Message
+from schemas.messages_schema import MessageSchema
 
 router = APIRouter(
     prefix="/messages",
     tags=["messages"]
 )
 
-@router.get('/')
-async def get_messages(conversation_id: int, db: Session = Depends(open_connection)):
+@router.get('/', response_model=List[MessageSchema], status_code=status.HTTP_200_OK)
+async def get_messages(conversation_id: int, db: Session = Depends(open_connection)) -> List[MessageSchema]:
     conversation = db.query(
         exists().where(Conversation.idConversation == conversation_id)
     ).scalar()

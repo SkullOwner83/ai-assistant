@@ -84,7 +84,7 @@ export const useChat = () => {
                 params: { conversation_id: conversation.idConversation }
             });
 
-            if (response.status === 200) {
+            if (response.status === 204) {
                 setConversations(prev => prev.filter(i => i.idConversation !== conversation.idConversation));
         
                 if (currentConversation?.idConversation == conversation.idConversation) {
@@ -101,7 +101,7 @@ export const useChat = () => {
             const updated = { ...conversation, title: newTitle };
             const response = await axios.put("http://localhost:8000/conversations", updated);
 
-            if (response.status === 200) {
+            if (response.status === 204) {
                 setConversations(prev =>
                     prev.map(c => {
                         if (c.idConversation === conversation.idConversation) {
