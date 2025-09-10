@@ -1,25 +1,27 @@
-from typing import List
-from openai import OpenAI
+import faiss
 import torch
-from numpy import dot
-from numpy.linalg import norm
+import numpy as np
+from typing import List, Optional
+from openai import OpenAI
 from langchain.docstore.document import Document
-from transformers import AutoTokenizer, AutoModel
+from transformers import AutoTokenizer, AutoModel, PreTrainedModel, PreTrainedTokenizerBase
+from transformers.modeling_outputs import BaseModelOutput
 
 class Embeddings():
     def __init__(self, openai: OpenAI):
         self.openai = openai
-        model = 'sentence-transformers/distiluse-base-multilingual-cased-v2'
-        self.model = AutoModel.from_pretrained(model)
-        self.tokenizer = AutoTokenizer.from_pretrained(model)
+        model_name = 'sentence-transformers/distiluse-base-multilingual-cased-v2'
+        self.model: PreTrainedModel = AutoModel.from_pretrained(model_name)
+        self.tokenizer: PreTrainedTokenizerBase = AutoTokenizer.from_pretrained(model_name)
+        self.model.eval()
 
     # Generate the vector representation of a text to be used as input to the model
-    async def get_embedding(self, text: str) -> List[float]:
+    def get_embedding(self, text: str) -> List[float]:
         text = text.replace('\n', ' ')
-        inputs = self.tokenizer(text, return_tensors="pt", padding=True, truncation=True)
+        tensors = self.tokenizer(text, return_tensors="pt", padding=True, truncation=True)
 
         with torch.no_grad():
-            outputs = self.model(**inputs)
+            outputs: BaseModelOutput = self.model(**tensors)
 
         embedding = outputs.last_hidden_state.mean(dim=1)
         vector = embedding.squeeze().numpy()
@@ -35,30 +37,27 @@ class Embeddings():
         # return embeddings.data[0].embedding
     
     # Generate a file with the vector representation of a text to be used as input to the model
-    async def get_document_embeddings(self, chunks: List[Document]) -> List[dict[str, float]]:
+    async def get_document_embeddings(self, chunks: List[Document]) -> List[List[float]]:
         embeddings_list = []
 
         for text in chunks:
-            embedding = await self.get_embedding(text.page_content)
-            embeddings_list.append({'text': text.page_content, 'embedding': embedding})
+            embedding = self.get_embedding(text.page_content)
+            embeddings_list.append(embedding)
  
         return embeddings_list
 
     # Search the best matches for a given text in a list of texts and return the top N matches
-    async def search(self, search: str, data: List[dict[str, str]], threshold: float = 0.5) -> List[str]:
-        search_embed = await self.get_embedding(search)
-        results = []
+    async def search(self, search: str, embeddings: List[List[float]], texts: List[str], top_matches: Optional[int] = 5) -> List[str]:
+        query = self.get_embedding(search)
+        query = np.array([query], dtype="float32")
+        faiss.normalize_L2(query)
 
-        for item in data:
-            similarity = self.check_similarity(search_embed, item['embedding'])
+        embeddings = np.array(embeddings, dtype="float32")
+        faiss.normalize_L2(embeddings)
 
-            if similarity >= threshold:
-                results.append({'text': item['text'], 'similarity': similarity})
+        dimension = embeddings.shape[1]
+        index = faiss.IndexFlatIP(dimension)
+        index.add(embeddings)
 
-        results.sort(key=lambda x: x['similarity'], reverse=True)
-        return [r['text'] for r in results]
-
-    # Calculate the similarity between two vectors using cosine similarity
-    @staticmethod
-    def check_similarity(vec1, vec2) -> float:
-        return dot(vec1, vec2) / (norm(vec1) * norm(vec2))
+        scores, indexes = index.search(query, top_matches)
+        return [texts[i] for i in indexes[0]]

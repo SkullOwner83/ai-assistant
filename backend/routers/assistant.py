@@ -26,8 +26,11 @@ async def ask(question: str = Form(...), conversation_id: Optional[int] = Form(N
 
     if file:
         document_chunks = await DatasetProcesator.chunk_file(file)
-        chunks_embeddings = await embeddings.get_document_embeddings(document_chunks)
-        relevant_chunks = await embeddings.search(question, chunks_embeddings, 0)
+        texts = [doc.page_content for doc in document_chunks]
+        embeddings_chunks = await embeddings.get_document_embeddings(document_chunks)
+        relevant_chunks = await embeddings.search(question, embeddings_chunks, texts)
+        
+
         context_text = relevant_chunks[0]
 
     #prompt = f"Context: {context_text}\n\nQuestion: {question}" if context_text else f"question: {question}"

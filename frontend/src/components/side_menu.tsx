@@ -96,7 +96,7 @@ export const SideMenu: React.FC<SideMenuProp> = ({
                                 </EditableLabel>
                             </button>
 
-                            <button className={`Options-Button ${showOptionsButton ? "Visible": "Hidden"}`}
+                            <button className={`Options-Bu  tton ${showOptionsButton ? "Visible": "Hidden"}`}
                                     onClick={(e) => { handleContextMenu(e, item) }}>
                                 <img src="options.svg" alt="Boton para desplegar opciones."/>
                             </button>
