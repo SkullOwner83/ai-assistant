@@ -2,6 +2,8 @@ import os
 import chromadb
 from uuid import uuid4
 from typing import Optional
+
+import numpy as np
 from services.embeddings import Embeddings
 from fastapi import APIRouter, Depends, Form, UploadFile, status
 from sqlalchemy.orm import Session
@@ -15,7 +17,7 @@ from chromadb.config import Settings
 
 API_KEY = os.getenv('OPENAI_KEY')
 ai_client = IAClient(API_KEY)
-chroma_client = chromadb.Client()
+chroma_client = chromadb.PersistentClient()
 chroma_collection = chroma_client.get_or_create_collection('Documents')
 embeddings = Embeddings(ai_client)
 chat_service = ChatService()
@@ -34,8 +36,6 @@ async def ask(question: str = Form(...), conversation_id: Optional[int] = Form(N
         document_chunks = await DatasetProcesator.chunk_file(file)
         texts = [doc.page_content for doc in document_chunks]
         embeddings_chunks = await embeddings.get_document_embeddings(document_chunks)
-        relevant_chunks = await embeddings.search(question, embeddings_chunks, texts)
-        context_text = relevant_chunks[0]
 
         chroma_collection.add(
             documents=texts,
@@ -44,9 +44,16 @@ async def ask(question: str = Form(...), conversation_id: Optional[int] = Form(N
             ids=[str(uuid4()) for _ in texts]
         )
 
+        query_embedding = embeddings.get_embedding(question)
+        query_embedding = np.array([query_embedding], dtype='float32')
+        results = chroma_collection.query(query_embeddings=query_embedding, n_results=5)
+        context_text = results['documents'][0][0]
+        # relevant_chunks = await embeddings.search(question, embeddings_chunks, texts)
+        # context_text = relevant_chunks[0]
+
     #prompt = f"Context: {context_text}\n\nQuestion: {question}" if context_text else f"question: {question}"
     #response = await ai_client.ask(prompt)
-    response = context_text
+    response = context_text or "No se encontró información relevante."
 
     if not conversation_id:
         conversation_created = chat_service.create_conversation(question[:50], db_session)
