@@ -1,4 +1,6 @@
 import os
+import chromadb
+from uuid import uuid4
 from typing import Optional
 from services.embeddings import Embeddings
 from fastapi import APIRouter, Depends, Form, UploadFile, status
@@ -9,8 +11,12 @@ from services.dataset_procesator import DatasetProcesator
 from services.chat_service import ChatService
 from schemas.askresponse_schema import AskResponseSchema
 
+from chromadb.config import Settings
+
 API_KEY = os.getenv('OPENAI_KEY')
 ai_client = IAClient(API_KEY)
+chroma_client = chromadb.Client()
+chroma_collection = chroma_client.get_or_create_collection('Documents')
 embeddings = Embeddings(ai_client)
 chat_service = ChatService()
 
@@ -29,9 +35,14 @@ async def ask(question: str = Form(...), conversation_id: Optional[int] = Form(N
         texts = [doc.page_content for doc in document_chunks]
         embeddings_chunks = await embeddings.get_document_embeddings(document_chunks)
         relevant_chunks = await embeddings.search(question, embeddings_chunks, texts)
-        
-
         context_text = relevant_chunks[0]
+
+        chroma_collection.add(
+            documents=texts,
+            embeddings=embeddings_chunks,
+            metadatas=[{'source': file.filename}] * len(texts),
+            ids=[str(uuid4()) for _ in texts]
+        )
 
     #prompt = f"Context: {context_text}\n\nQuestion: {question}" if context_text else f"question: {question}"
     #response = await ai_client.ask(prompt)
