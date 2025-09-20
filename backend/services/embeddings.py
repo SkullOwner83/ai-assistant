@@ -8,7 +8,7 @@ from transformers import AutoTokenizer, AutoModel, PreTrainedModel, PreTrainedTo
 from transformers.modeling_outputs import BaseModelOutput
 
 class Embeddings():
-    def __init__(self, openai: OpenAI):
+    def __init__(self, openai: OpenAI = None):
         self.openai = openai
         model_name = 'sentence-transformers/distiluse-base-multilingual-cased-v2'
         self.model: PreTrainedModel = AutoModel.from_pretrained(model_name)
@@ -37,7 +37,7 @@ class Embeddings():
         # return embeddings.data[0].embedding
     
     # Generate a file with the vector representation of a text to be used as input to the model
-    async def get_document_embeddings(self, chunks: List[Document]) -> List[List[float]]:
+    def get_document_embeddings(self, chunks: List[Document]) -> List[List[float]]:
         embeddings_list = []
 
         for text in chunks:
