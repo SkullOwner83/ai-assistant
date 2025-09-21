@@ -1,18 +1,11 @@
-import hashlib
 import numpy as np
-from uuid import uuid4
 import chromadb
+from uuid import uuid4
+from fastapi import UploadFile
 from datetime import datetime, timezone
 from services.embeddings import Embeddings
 from services.dataset_procesator import DatasetProcesator
-
-from fastapi import UploadFile
-
-def get_hash(file: UploadFile) -> str:
-    content = file.file.read()
-    file.file.seek(0)
-    hash = hashlib.md5(content).hexdigest()
-    return hash
+from utils.file import File
 
 class RAGService():
     def __init__(self):
@@ -21,7 +14,7 @@ class RAGService():
         self.chroma_collection = self.chroma_client.get_or_create_collection(name='Documents')
 
     async def process_file(self, file: UploadFile) -> None:
-        file_hash = get_hash(file)
+        file_hash = File.get_hash(file)
         exists = self.chroma_collection.get(where={"source": file_hash})
 
         if not exists["ids"]:
