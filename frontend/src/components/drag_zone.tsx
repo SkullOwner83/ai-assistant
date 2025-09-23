@@ -1,12 +1,14 @@
 interface DragZoneprops{ 
     children: React.ReactNode;
     validFiles: Array<string>;
+    disable: boolean;
     onDropFile: (file: File) => void;
 }
 
-export const DragZone: React.FC<DragZoneprops> = ({ children, validFiles, onDropFile })  => {
+export const DragZone: React.FC<DragZoneprops> = ({ children, validFiles, disable = false, onDropFile })  => {
     const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
         e.preventDefault();
+        if (disable) return
 
         if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
             const file = e.dataTransfer.files[0];

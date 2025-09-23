@@ -4,7 +4,7 @@ import type { ContextMenu } from '../interfaces/context_menu'
 import { Modal } from './modal'
 import { EditableLabel } from './editable_label'
 
-interface SideMenuProp {
+interface SideMenuProps {
     isOpen: boolean,
     items: Array<Conversation>,
     selectedItem: Conversation | null,
@@ -15,7 +15,7 @@ interface SideMenuProp {
     onToggle?: () => void
 }
 
-export const SideMenu: React.FC<SideMenuProp> = ({ 
+export const SideMenu: React.FC<SideMenuProps> = ({ 
     isOpen, 
     items, 
     selectedItem, 
@@ -127,12 +127,12 @@ export const SideMenu: React.FC<SideMenuProp> = ({
                 <li><button onClick={() => {
                     setIsModalOpen(true);
                     setModalContent(
-                        <div className="Delete-Modal">
+                        <div>
                             <h1>Confirmar eliminación</h1>
                             <p>Estas seguro que deseas eliminar la conversación <strong>{menu.conversation?.title}</strong></p>
                             
                             <div className="Modal-Buttons">
-                                <button onClick={() => setIsModalOpen(false)}>Cancelar</button>
+                                <button className="Cancel-Button" onClick={() => setIsModalOpen(false)}>Cancelar</button>
                                 <button 
                                     className="Delete-Button"
                                     onClick={() => {

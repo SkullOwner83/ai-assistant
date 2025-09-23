@@ -4,7 +4,11 @@ import axios from "axios";
 import type { Conversation } from "../interfaces/conversation";
 import type { Message } from "../interfaces/message";
 
-export const useChat = () => {
+interface useChatProps {
+    onError?: (message: string) => void;
+}
+
+export const useChat = ({ onError }: useChatProps) => {
     const [sideMenu, setSideMenu] = useState(true);
     const [currentConversation, setCurrentConversation] = useState<Conversation | null>(null);
     const [conversations, setConversations] = useState<Conversation[]>([]);
@@ -44,12 +48,17 @@ export const useChat = () => {
         get_messages();
     }, [currentConversation])
 
-    // Send the message and wait for the reponse to the server
     const sendMessage = async () => {
         if (textBoxRef.current) {
+            if (!currentConversation && !file) {
+                onError?.("Adjunta un archivo para poder trabajar con él.")
+                return;
+            }
+
             const content = textBoxRef.current.value
             const formData = new FormData();
             formData.append("question", content)
+
             if (currentConversation) formData.append("conversation_id", currentConversation.idConversation)
             if (file) formData.append("file", file);
 
@@ -67,7 +76,7 @@ export const useChat = () => {
                 const data = response.data
                 setMessages(prev => [...prev, data.answer]);
 
-                // If a new chat was created, insert it into the list and set it as the current conversation
+                // If a new chat was created, insert it into the l ist and set it as the current conversation
                 if (data.conversation) {
                     setConversations(prev => [...prev, data.conversation]);
                     setCurrentConversation(data.conversation);

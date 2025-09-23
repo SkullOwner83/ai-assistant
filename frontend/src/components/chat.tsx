@@ -1,16 +1,20 @@
 import ReactMarkdown from 'react-markdown';
 import type { Message } from '../interfaces/message';
+import type { Conversation } from '../interfaces/conversation';
 
 interface ChatProps {
     messages: Array<Message>;
     textBoxRef: React.RefObject<HTMLInputElement | null>;
     attachedFile: File | null;
+    currentConversation?: Conversation
     onSendMessage: () => void;
 }
 
-export const Chat: React.FC<ChatProps> = ({ messages, textBoxRef, attachedFile, onSendMessage}) => {
+export const Chat: React.FC<ChatProps> = ({ messages, textBoxRef, attachedFile, currentConversation, onSendMessage}) => {
     const handleSendMessage = async (e: React.KeyboardEvent<HTMLInputElement>) => {
-        if (e.key === "Enter") onSendMessage()
+        if (e.key === "Enter" && textBoxRef.current?.value.trim() != "") {
+            onSendMessage()
+        }
     }
 
     return (
@@ -30,7 +34,11 @@ export const Chat: React.FC<ChatProps> = ({ messages, textBoxRef, attachedFile, 
             <div className="TextBox-Container">
                 <div className="Input-Wrapper">
                     <img src="clip.png" className={attachedFile? "Visible" : ""} alt="Icono de archivo adjuntado."/>
-                    <input type="text" placeholder="Pregunta lo que quieras..." ref={textBoxRef} onKeyDown={handleSendMessage}/>
+                    <input 
+                        ref={textBoxRef}
+                        type="text"
+                        placeholder={attachedFile || currentConversation ? "Pregunta sobre el archivo adjunto..." : "Adjunta un archivo para comenzar"}
+                        onKeyDown={handleSendMessage}/>
                 </div>
             </div>
         </div>
