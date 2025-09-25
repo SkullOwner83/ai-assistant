@@ -4,13 +4,10 @@ main {
     height: 100dvh;
 
     .SideMenu-Component { grid-column: 1; }
-    .DragZone-Component { 
+    .Chat-Component {
         grid-column: 2;
+        height: 100%;
         min-height: 0; 
-        
-        .Chat-Component {
-            height: 100%;
-        }
     }
 }
 

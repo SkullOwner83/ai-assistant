@@ -15,6 +15,7 @@ export const useChat = ({ onError }: useChatProps) => {
     const [messages, setMessages] = useState<Message[]>([]);
     const [file, setFile] = useState<File | null>(null);
     const textBoxRef = useRef<HTMLInputElement>(null);
+    const MAX_SIZE = 16 * 1024 * 1024;
 
     // Load conversations from the database on startup
     useEffect(() => {
@@ -51,7 +52,12 @@ export const useChat = ({ onError }: useChatProps) => {
     const sendMessage = async () => {
         if (textBoxRef.current) {
             if (!currentConversation && !file) {
-                onError?.("Adjunta un archivo para poder trabajar con él.")
+                onError?.("Adjunta un archivo para poder trabajar con él.");
+                return;
+            }
+
+            if (file && file.size > MAX_SIZE) {
+                onError?.("El archivo no puede superar los 16MB");
                 return;
             }
 

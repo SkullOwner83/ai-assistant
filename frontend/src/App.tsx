@@ -10,6 +10,7 @@ import type { Conversation } from './interfaces/conversation';
 const App: React.FC = () => {
     const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
     const [modalMessage, setModalMessage] = useState<string | null>(null);
+    const VALID_FILES = ["plain"]
 
     const {
         sideMenu,
@@ -36,6 +37,11 @@ const App: React.FC = () => {
         setFile(null);
     }
 
+    const showError = (message: string) => {
+        setModalMessage(message)
+        setIsModalOpen(true);
+    }
+
     return (
         <main>
             <SideMenu
@@ -47,14 +53,16 @@ const App: React.FC = () => {
                 onRenameConversation={renameConversation}
                 onDownloadConversation={downloadConversation}
                 onToggle={() => setSideMenu(!sideMenu)}/>
-            <DragZone onDropFile={setFile} validFiles={["plain"]} disable={currentConversation ? true : false}>
-                <Chat
-                    messages={messages}
-                    textBoxRef={textBoxRef}
-                    attachedFile={file}
-                    currentConversation={currentConversation}
-                    onSendMessage={sendMessage}/>
-            </DragZone>
+
+            <Chat
+                messages={messages}
+                textBoxRef={textBoxRef}
+                attachedFile={file}
+                validFiles={VALID_FILES}
+                currentConversation={currentConversation}
+                onSendMessage={sendMessage}
+                onFileChanged={setFile}
+                onError={showError}/>
 
             <Modal isOpen={isModalOpen} onClose={() => {setIsModalOpen(!isModalOpen)}}>
                 <div>
@@ -62,7 +70,13 @@ const App: React.FC = () => {
                     <p>{modalMessage}</p>
 
                     <div className="Modal-Buttons">
-                        <button onClick={() => setIsModalOpen(false)}>Aceptar</button>
+                        <button 
+                            children="Aceptar"
+                            onClick={() => { 
+                                setIsModalOpen(false)
+                                setModalMessage("")
+                            }
+                        }/>
                     </div>
                 </div>
             </Modal>

@@ -1,36 +1,50 @@
 interface DragZoneprops{ 
-    children: React.ReactNode;
     validFiles: Array<string>;
-    disable: boolean;
-    onDropFile: (file: File) => void;
+    onFileChanged?: (file: File) => void;
+    onError?: (message: string) => void;
 }
 
-export const DragZone: React.FC<DragZoneprops> = ({ children, validFiles, disable = false, onDropFile })  => {
+export const DragZone: React.FC<DragZoneprops> = ({ validFiles, onFileChanged, onError })  => {
     const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
         e.preventDefault();
-        if (disable) return
 
         if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
             const file = e.dataTransfer.files[0];
             const extension = file.type.split("/")[1];
-            console.log(extension)
 
             if (validFiles.includes(extension)) {
-                onDropFile(e.dataTransfer.files[0]);
+                onFileChanged?.(e.dataTransfer.files[0]);
                 e.dataTransfer.clearData();
-            }
+            }   
             else {
-                alert("Archivo no válido.");
+                onError?.("Archivo no válido.");
             }
         }
     }
     
     return (
         <div 
-            className="DragZone-Component"
+            className="Dragzone-Component"
             onDragOver={(e) => e.preventDefault()} 
             onDrop={handleDrop}>
-                {children}
+                <img src="upload.png" alt="Subir imagen" draggable="false"/>
+                <h1>Elige o suelta un archivo</h1>
+                <p>Archivos soportados: TXT, PDF.</p>
+                <p>Tamaño máximo: 16MB</p>
+                <label className="Upload-Button">
+                    Buscar archivo
+                    <input type="file" accept=".txt, .pdf" onChange={(e) => {
+                        const file = e.target.files?.[0];
+                        const extension = file?.type.split("/")[1];
+                    
+                        if (file && extension && validFiles.includes(extension)) {
+                            onFileChanged?.(file);
+                        } else {
+                            onError?.("Archivo no válido.");
+                            e.target.value = "";
+                        }
+                    }}/>
+                </label>
         </div>
     )
 }

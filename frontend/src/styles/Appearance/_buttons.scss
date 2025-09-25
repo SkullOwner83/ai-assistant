@@ -1,4 +1,7 @@
 @mixin Button-Control($Color: $PrimaryColor, $OnColor: $OnPrimaryColor) {
+    display: flex;
+    justify-content: center;
+    align-items: center;
     width: auto;
     height: 32px;
     min-width: 100px;

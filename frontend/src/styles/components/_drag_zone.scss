@@ -1,0 +1,25 @@
+.Dragzone-Component {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+    border: 4px dashed $PrimaryColor;
+    border-radius: 8px;
+    user-select: none;
+    //background-color: gray;
+
+    img {
+        width: 150px;
+    }
+
+    .Upload-Button {
+        @include Button-Control();
+        margin-top: 32px;
+
+        input[type=file] {
+            display: none;
+        }
+    }
+}
