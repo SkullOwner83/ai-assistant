@@ -81,6 +81,7 @@ export const useChat = ({ onError }: useChatProps) => {
                 const response = await axios.post("http://localhost:8000/assistant", formData);
                 const data = response.data
                 setMessages(prev => [...prev, data.answer]);
+                setFile(null);
 
                 // If a new chat was created, insert it into the l ist and set it as the current conversation
                 if (data.conversation) {

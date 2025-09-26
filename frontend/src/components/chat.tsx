@@ -10,7 +10,7 @@ interface ChatProps {
     validFiles: Array<string>;
     currentConversation?: Conversation | null;
     onSendMessage: () => void;
-    onFileChanged: (file: File) => void;
+    onFileChanged: (file: File | null) => void;
     onError?: (message: string) => void;
 }
 
@@ -40,14 +40,11 @@ export const Chat: React.FC<ChatProps> = ({ messages, textBoxRef, attachedFile, 
             </div>
 
             <div className="TextBox-Container">
-                <div className="Input-Wrapper">
-                    <img src="clip.png" className={attachedFile? "Visible" : ""} alt="Icono de archivo adjuntado."/>
-                    <input 
-                        ref={textBoxRef}
-                        type="text"
-                        placeholder={attachedFile || currentConversation ? "Pregunta sobre el archivo adjunto..." : "Adjunta un archivo para comenzar"}
-                        onKeyDown={handleSendMessage}/>
-                </div>
+                <input 
+                    ref={textBoxRef}
+                    type="text"
+                    placeholder={attachedFile || currentConversation ? "Pregunta sobre el archivo adjunto..." : "Adjunta un archivo para comenzar"}
+                    onKeyDown={handleSendMessage}/>
             </div>
         </div>
     )

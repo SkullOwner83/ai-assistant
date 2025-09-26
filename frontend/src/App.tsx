@@ -1,6 +1,5 @@
 import { SideMenu } from './components/side_menu';
 import { Chat } from './components/chat';
-import { DragZone } from './components/drag_zone';
 import { useChat } from './hooks/useChat';
 import './styles/styles.scss'
 import { Modal } from './components/modal';
@@ -10,7 +9,7 @@ import type { Conversation } from './interfaces/conversation';
 const App: React.FC = () => {
     const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
     const [modalMessage, setModalMessage] = useState<string | null>(null);
-    const VALID_FILES = ["plain"]
+    const VALID_FILES = ["plain", "pdf"]
 
     const {
         sideMenu,

@@ -61,13 +61,13 @@ export const SideMenu: React.FC<SideMenuProps> = ({
                 </div>
 
                 <button className="Hide-Button" onClick={()=> onToggle?.()}>
-                    <img src="Side Menu.svg" draggable="false" alt="Boton para ocultar menu."/>
+                    <img src="Side Menu.svg" draggable="false" alt="Bóton para ocultar menu."/>
                 </button>
             </div>
 
             <div className="Action-Buttons">
                 <button onClick={() => onSelectedItem?.(null)}>
-                    <img src="New.svg"/>
+                    <img src="New.svg" alt="Botón para crear nueva conversación"/>
                     <p>Nueva conversación</p>
                 </button>
                 <hr/>
