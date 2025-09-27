@@ -1,7 +1,9 @@
+import tempfile
 from typing import List, Optional
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from fastapi import UploadFile
 from langchain.docstore.document import Document
+from langchain_community.document_loaders import PyPDFLoader
 
 class DatasetProcesator():
     @staticmethod
@@ -11,6 +13,13 @@ class DatasetProcesator():
         if file.filename.endswith(".txt"):
             text = content.decode("utf-8", errors="ignore")
             documents = [Document(page_content=text, metadata={"source": file.filename})]
+        elif file.filename.endswith(".pdf"):
+            with tempfile.NamedTemporaryFile(delete=False, suffix=".pdf") as tmp:
+                tmp.write(content)
+                tmp_path = tmp.name
+
+            loader = PyPDFLoader(tmp_path)
+            documents = loader.load()
         else:
             raise ValueError(f"Formato no soportado: {file.filename}")
 
@@ -50,27 +59,3 @@ class DatasetProcesator():
         documents = await DatasetProcesator.process_file(file)
         chunks = splitter.split_documents(documents)
         return chunks
-
-
-
-
-import asyncio
-import io
-
-async def test():
-    file_path = "C:/Users/javier/Desktop/archivo_prueba.txt"
-
-    with open(file_path, "rb") as f:
-        file_bytes = f.read()
-
-    uploaded_file = UploadFile(
-        filename="archivo_prueba.txt",
-        file=io.BytesIO(file_bytes)
-    )
-
-    chunks = await DatasetProcesator.chunk_file(uploaded_file, 100)
-
-    for c in chunks:
-        print(str(c) + "\n")
-
-#asyncio.run(test())
