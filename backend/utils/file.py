@@ -1,4 +1,5 @@
 import hashlib
+from io import BytesIO
 from fastapi import UploadFile
 
 class File():
@@ -8,3 +9,7 @@ class File():
         file.file.seek(0)
         hash = hashlib.md5(content).hexdigest()
         return hash
+    
+    @staticmethod
+    def bytes_to_upload_file(file_bytes: bytes, filename: str = "unknown") -> UploadFile:
+        return UploadFile(file=BytesIO(file_bytes), filename=filename)

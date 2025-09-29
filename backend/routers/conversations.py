@@ -24,7 +24,7 @@ async def get_conversations(db: Session = Depends(open_connection)) -> List[Conv
 
 @router.put('/', status_code=status.HTTP_204_NO_CONTENT)
 async def update_conversation(conversation: ConversationSchema, db: Session = Depends(open_connection)) -> None:
-    db_conversation = db.query(Conversation).filter(Conversation.idConversation == conversation.idConversation).first()
+    db_conversation = db.query(Conversation).filter(Conversation.idConversation==conversation.idConversation).first()
 
     if not db_conversation:
         raise HTTPException(status_code=404, detail='The conversation was not found.')
@@ -36,24 +36,25 @@ async def update_conversation(conversation: ConversationSchema, db: Session = De
 
 @router.delete('/', status_code=status.HTTP_204_NO_CONTENT)
 async def delete_conversations(conversation_id: int, db: Session = Depends(open_connection)) -> None:
-    conversation = db.query(Conversation).filter(Conversation.idConversation == conversation_id).first()
+    conversation = db.query(Conversation).filter(Conversation.idConversation==conversation_id).first()
     
     if not conversation:
         raise HTTPException(status_code=404, detail="The conversation was not found.")
 
+    db.query(Message).filter(Message.conversationId==conversation_id).delete()
     db.delete(conversation)
     db.commit()
     return Response(status_code=status.HTTP_204_NO_CONTENT)
 
 @router.get('/download', status_code=status.HTTP_200_OK)
 async def download_conversation(conversation_id: int, db: Session = Depends(open_connection)) -> FileResponse:
-    conversation = db.query(Conversation).filter(Conversation.idConversation == conversation_id).first()
+    conversation = db.query(Conversation).filter(Conversation.idConversation==conversation_id).first()
 
     if not conversation:
         raise HTTPException(status_code=404, detail="The conversation was not found.")
     
     filename = f'{conversation.title}.txt'
-    messages = db.query(Message).filter(Message.conversationId == conversation_id).all()
+    messages = db.query(Message).filter(Message.conversationId==conversation_id).all()
 
     with tempfile.NamedTemporaryFile(delete=False, suffix='.txt', mode='w', encoding='utf-8') as tmp:
         for c in messages:

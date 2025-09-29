@@ -3,7 +3,8 @@ USE ai_assistant;
 
 CREATE TABLE Conversations(
 	idConversation INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-    title VARCHAR(255) NOT NULL
+    title VARCHAR(255) NOT NULL,
+    createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL
 );
 
 CREATE TABLE Messages(

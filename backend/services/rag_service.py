@@ -1,3 +1,4 @@
+from typing import Optional
 import numpy as np
 import chromadb
 from uuid import uuid4
@@ -32,7 +33,7 @@ class RAGService():
                         'source': file_hash,
                         'filename': file.filename,
                         'content_type': file.content_type,
-                        'upload_date': datetime.now(timezone.utc).isoformat(),
+                        'created_at': datetime.now(timezone.utc).isoformat(),
                         'size': getattr(file, "size", None),
                         'page_count': len(texts)
                     }
@@ -40,10 +41,15 @@ class RAGService():
                 ]
             )
 
-    def search(self, query: str) -> list[str]:
+    def search(self, query: str, file_hash: Optional[str] = None) -> list[str]:
         query_embedding = self.embeddings_service.get_embedding(query)
         query_embedding = np.array([query_embedding], dtype='float32')
-        results = self.chroma_collection.query(query_embeddings=query_embedding, n_results=5)
+
+        results = self.chroma_collection.query(
+            query_embeddings=query_embedding,
+            n_results=5,
+            where={"source": file_hash} if file_hash else None
+        )
 
         if results and results.get('documents') and results['documents'][0]:
             return results['documents'][0]
