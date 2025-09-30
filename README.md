@@ -5,7 +5,7 @@ AI-Assistant is a virtual assistant powered by artificial intelligence. It can g
 - A user uploads a file with a question to create a new conversation linked to that dataset
 - The backend processes the input: generates embeddings for documents and stores conversations in the database.
 - If an OpenAI API key is provided, the assistant can generate AI-powered responses.
-- If no API key is set or the AI Client is not available, the assistant will respond with predefined text or simple logic.
+- If the OpenAI key is missing or invalid, the assistant will automatically try Hugging Face models for accessibility and free usage. If neither API is available, it will return predefined text or simple logic.
 
 ## Backend
 
@@ -63,8 +63,8 @@ The frontend will be available in http://localhost:3000.
 2. Replace the placeholders with your actual credentials.
 
 ```
-# OpenAI API key
-API_KEY=<your_openai_api_key>
+# AI API key (OpenAI or Hugging Face)
+API_KEY=<your_api_key>
 
 # MySQL database configuration
 DB_USER=<your_mysql_user>
@@ -73,6 +73,11 @@ DB_HOST=localhost
 DB_PORT=3306
 DB_NAME=ai_assistant
 ```
+
+> [!NOTE]
+> - **OpenAI priority**: If the API key is for OpenAI, the assistant will use OpenAI’s models first.
+> - **Hugging Face fallback**: If OpenAI fails (invalid or missing key), the assistant will automatically try Hugging Face models (Model: `meta-llama/Llama-3.1-8B-Instruct:cerebras`).
+> - You only need **one API key**—either OpenAI or Hugging Face. No extra configuration is required.
 
 ## License
 
