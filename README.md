@@ -2,8 +2,8 @@
 AI-Assistant is a virtual assistant powered by artificial intelligence. It can generate embeddings from the uploaded files (datasets) to perform **semantic searches** and answer user questions based on those files.
 
 **How it works:**
-- A user uploads a file with a question to create a new conversation linked to that dataset
-- The backend processes the input: generates embeddings for documents and stores conversations in the database.
+- A user uploads a file with a question to create a new conversation linked to that dataset.
+- The backend processes the input: generates embeddings for documents, stores the conversation in the database, and saves the embeddings locally in ChromaDB.
 - If an OpenAI API key is provided, the assistant can generate AI-powered responses.
 - If the OpenAI key is missing or invalid, the assistant will automatically try Hugging Face models for accessibility and free usage. If neither API is available, it will return predefined text or simple logic.
 

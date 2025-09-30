@@ -1,6 +1,7 @@
 USE ai_assistant;
 
-INSERT INTO Conversations (title) VALUES ("Conversación de prueba.");
+SET @file_hash = "7e158dc3b9ce7dba84b37cb7009ea31c";
+INSERT INTO Conversations (title, fileHash) VALUES ("Conversación de prueba.", @file_hash);
 SET @conversation_id = LAST_INSERT_ID();
 INSERT INTO Messages (messageFrom, createdAt, content, conversationId) VALUES ("Client", NOW(), "¡Hola!", @conversation_id);
 INSERT INTO Messages (messageFrom, createdAt, content, conversationId) VALUES ("Server", NOW(), "¡Hola! soy tu asistente virtual. ¿Cómo puedo ayudarte?", @conversation_id);

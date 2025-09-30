@@ -31,6 +31,8 @@ async def ask(question: str = Form(...), conversation_id: Optional[int] = Form(N
         if not File.validate(file): raise HTTPException(status_code=404, detail="El archivo no es valido.")
         
         file_hash = File.get_hash(file)
+        print(file_hash)
+        print("-------------------------------------------------------------")
         await rag_service.process_file(file)
         conversation_created = await chat_service.create_conversation(question[:50], file_hash, db_session)
         conversation_id = conversation_created.idConversation
