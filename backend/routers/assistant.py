@@ -28,6 +28,7 @@ async def ask(question: str = Form(...), conversation_id: Optional[int] = Form(N
     # Create a new conversation and process the attached file
     if not conversation_id:
         if not file: raise HTTPException(status_code=404, detail="No se ha proporcionado un archivo para trabajarlo.")
+        if not File.validate(file): raise HTTPException(status_code=404, detail="El archivo no es valido.")
         
         file_hash = File.get_hash(file)
         await rag_service.process_file(file)
@@ -38,12 +39,13 @@ async def ask(question: str = Form(...), conversation_id: Optional[int] = Form(N
 
         if not conversation: raise HTTPException(status_code=404, detail="No se encontró archivo asociado a la conversación.")
         if not conversation.fileHash: raise HTTPException(status_code=404, detail="La conversación no tiene un dataset ligado para trabajar.")
-        
+
         file_hash = conversation.fileHash
 
     # Perform the semantic search in chroma database and return the most relevant chunks
     results = rag_service.search(question, file_hash)
 
+    # Generate an aumented response if the open ai is accessed
     try:
         context = "\n\n".join(results) if results else None
         prompt = f"Context: {context}\n\nQuestion: {question}" if context else f"question: {question}"

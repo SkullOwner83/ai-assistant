@@ -1,8 +1,11 @@
 import hashlib
-from io import BytesIO
 from fastapi import UploadFile
 
+MAX_SIZE = 16
+ALLOWED_EXTENSIONS = ['txt', 'pdf']
+
 class File():
+
     @staticmethod
     def get_hash(file: UploadFile) -> str:
         content = file.file.read()
@@ -11,5 +14,9 @@ class File():
         return hash
     
     @staticmethod
-    def bytes_to_upload_file(file_bytes: bytes, filename: str = "unknown") -> UploadFile:
-        return UploadFile(file=BytesIO(file_bytes), filename=filename)
+    def validate(file: UploadFile) -> bool:
+        size = len(file.file.read()) / (1024 * 1024)
+        file.file.seek(0)
+        extension = file.filename.split('.')[-1].lower()
+
+        return size <= MAX_SIZE and extension in ALLOWED_EXTENSIONS
