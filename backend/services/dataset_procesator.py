@@ -1,9 +1,9 @@
 import tempfile
 from typing import List, Optional
-from langchain_text_splitters import RecursiveCharacterTextSplitter
 from fastapi import UploadFile
+from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain.docstore.document import Document
-from langchain_community.document_loaders import PyPDFLoader
+from langchain_community.document_loaders.pdf import PDFPlumberLoader
 
 class DatasetProcesator():
     @staticmethod
@@ -18,7 +18,7 @@ class DatasetProcesator():
                 tmp.write(content)
                 tmp_path = tmp.name
 
-            loader = PyPDFLoader(tmp_path)
+            loader = PDFPlumberLoader(tmp_path)
             documents = loader.load()
         else:
             raise ValueError(f"Formato no soportado: {file.filename}")
