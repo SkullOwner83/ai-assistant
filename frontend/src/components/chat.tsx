@@ -1,7 +1,9 @@
 import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm'
 import type { Message } from '../interfaces/message';
 import type { Conversation } from '../interfaces/conversation';
 import { DragZone } from './drag_zone';
+import { useEffect, useRef } from 'react';
 
 interface ChatProps {
     messages: Array<Message>;
@@ -15,10 +17,20 @@ interface ChatProps {
 }
 
 export const Chat: React.FC<ChatProps> = ({ messages, textBoxRef, attachedFile, validFiles, currentConversation, onSendMessage, onFileChanged, onError }) => {
+    const lastMessageRef = useRef<HTMLLIElement | null>(null);
+
+    useEffect(() => {
+            lastMessageRef.current?.scrollIntoView({ behavior: "smooth" });
+    }, [messages]);
+
     const handleSendMessage = async (e: React.KeyboardEvent<HTMLInputElement>) => {
         if (e.key === "Enter" && textBoxRef.current?.value.trim() != "") {
             onSendMessage()
         }
+    }
+
+    const formatearMarkdown = (texto: string) => {
+        return texto.replace(/(\d+\.\s)/g, '\n$1').replace(/(-\s)/g, '\n$1') 
     }
 
     return (
@@ -28,13 +40,23 @@ export const Chat: React.FC<ChatProps> = ({ messages, textBoxRef, attachedFile, 
                     <DragZone onFileChanged={onFileChanged} validFiles={validFiles} onError={onError}/>
                 ) : (
                     <ul>
-                        {messages.map((m, i) => (
-                            <li key={i} className={m.messageFrom == "Client" ? "Client-Message" : "Server-Message"}>
-                                <div>
-                                    <ReactMarkdown children={m.content}/>
-                                </div>
-                            </li>
-                        ))}
+                        {messages.map((m, i) => {
+                            const isLast = i === messages.length - 1;
+
+                            return (
+                                <li
+                                    key={i}
+                                    ref={isLast ? lastMessageRef : null}
+                                    className={m.messageFrom == "Client" ? "Client-Message" : "Server-Message"}
+                                >
+                                    <div>
+                                        <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                                            {formatearMarkdown(m.content)}
+                                        </ReactMarkdown>
+                                    </div>
+                                </li>
+                            );
+                        })}
                     </ul>
                 )}
             </div>

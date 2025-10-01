@@ -15,7 +15,7 @@ export const useChat = ({ onError }: useChatProps) => {
     const [messages, setMessages] = useState<Message[]>([]);
     const [file, setFile] = useState<File | null>(null);
     const textBoxRef = useRef<HTMLInputElement>(null);
-    const MAX_SIZE = 16 * 1024 * 1024;
+    const MAX_SIZE = 500 * 1024 * 1024;
 
     // Load conversations from the database on startup
     useEffect(() => {
