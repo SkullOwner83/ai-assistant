@@ -1,6 +1,6 @@
 USE ai_assistant;
 
-SET @file_hash = "7e158dc3b9ce7dba84b37cb7009ea31c";
+SET @file_hash = "730a05cd50b1b247c7d79f13dd410af8";
 INSERT INTO Conversations (title, fileHash) VALUES ("Conversación de prueba.", @file_hash);
 SET @conversation_id = LAST_INSERT_ID();
 INSERT INTO Messages (messageFrom, createdAt, content, conversationId) VALUES ("Client", NOW(), "¡Hola!", @conversation_id);
