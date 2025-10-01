@@ -7,6 +7,11 @@ AI-Assistant is a virtual assistant powered by artificial intelligence. It can g
 - If an OpenAI API key is provided, the assistant can generate AI-powered responses.
 - If the OpenAI key is missing or invalid, the assistant will automatically try Hugging Face models for accessibility and free usage. If neither API is available, it will return predefined text or simple logic.
 
+## Requirements
+- Python 3.10
+- Node.js 22.12.0
+- MySQL 8.0.33
+
 ## Backend
 
 1. Enter the backend directory:
@@ -32,6 +37,8 @@ AI-Assistant is a virtual assistant powered by artificial intelligence. It can g
 5. Run the server
 
 ```uvicorn main:app --reload```
+
+The backend will be available in http://127.0.0.1:8000
 
 ## Frontend
 
@@ -76,7 +83,8 @@ DB_NAME=ai_assistant
 
 > [!NOTE]
 > - **OpenAI priority**: If the API key is for OpenAI, the assistant will use OpenAI’s models first.
-> - **Hugging Face fallback**: If OpenAI fails (invalid or missing key), the assistant will automatically try Hugging Face models (Model: `meta-llama/Llama-3.1-8B-Instruct:cerebras`).
+> - **Hugging Face fallback**: If OpenAI fails (invalid or missing key), the assistant will automatically try Hugging Face models. 
+> - **Default model**: `meta-llama/Llama-3.1-8B-Instruct:cerebras` is the default selected model to Hugging Face. You can try other models: visit [Hugging Face Models](https://huggingface.co/models?pipeline_tag=text-generation&sort=trending) to explore the available models.
 > - You only need **one API key**—either OpenAI or Hugging Face. No extra configuration is required.
 
 ## License
