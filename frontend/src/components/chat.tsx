@@ -29,10 +29,6 @@ export const Chat: React.FC<ChatProps> = ({ messages, textBoxRef, attachedFile, 
         }
     }
 
-    const formatearMarkdown = (texto: string) => {
-        return texto.replace(/(\d+\.\s)/g, '\n$1').replace(/(-\s)/g, '\n$1') 
-    }
-
     return (
         <div className="Chat-Component">
             <div className="Messages-Container">
@@ -51,7 +47,7 @@ export const Chat: React.FC<ChatProps> = ({ messages, textBoxRef, attachedFile, 
                                 >
                                     <div>
                                         <ReactMarkdown remarkPlugins={[remarkGfm]}>
-                                            {formatearMarkdown(m.content)}
+                                            {m.content}
                                         </ReactMarkdown>
                                     </div>
                                 </li>

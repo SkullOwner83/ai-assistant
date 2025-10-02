@@ -1,3 +1,7 @@
+@use "../settings" as *;
+@use "../mixins" as *;
+@use "../Appearance/buttons" as *;
+
 .Modal-Component {
     display: flex;
     position: fixed;
@@ -21,7 +25,9 @@
         border-radius: 16px;
         transform: scale(0); 
         transition: 0.3s;
+        margin: 32px;
 
+        h1 { @include ScreenMinWidth(600px) { font-size: 24px; } }
         p { margin-bottom: 32px; }
 
         .Modal-Buttons {
