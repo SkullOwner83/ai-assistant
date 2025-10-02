@@ -15,9 +15,10 @@ export const DragZone: React.FC<DragZoneprops> = ({ validFiles, onFileChanged, o
 
         if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
             const file = e.dataTransfer.files[0];
-            const extension = file.type.split("/")[1];
+            const extension = file.name.split(".").pop()?.toLowerCase();
 
-            if (validFiles.includes(extension)) {
+            if (extension && validFiles.includes(extension)) {
+                setFile(e.dataTransfer.files[0]);
                 onFileChanged?.(e.dataTransfer.files[0]);
                 e.dataTransfer.clearData();
             }   
@@ -44,13 +45,14 @@ export const DragZone: React.FC<DragZoneprops> = ({ validFiles, onFileChanged, o
                 <div className="Drag-Area">
                     <img src="upload.png" alt="Subir imagen" draggable="false"/>
                     <h1>Elige o suelta un archivo</h1>
-                    <p>Archivos soportados: TXT, PDF.</p>
-                    <p>Tamaño máximo: 16MB</p>
+                    <p>Archivos soportados: TXT, PDF, DOCX.</p>
+                    <p>Tamaño máximo: 500MB</p>
                     <label className="Upload-Button">
                         Buscar archivo
                         <input type="file" accept=".txt, .pdf" ref={browserFileRef} onChange={(e) => {
                             const uploadedFile = e.target.files?.[0]
-                            const extension = uploadedFile?.type.split("/")[1];
+                            const extension = uploadedFile?.name.split(".").pop()?.toLowerCase();
+
                     
                             if (uploadedFile && extension && validFiles.includes(extension)) {
                                 setFile(uploadedFile);

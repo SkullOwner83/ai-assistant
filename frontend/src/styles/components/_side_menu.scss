@@ -1,132 +1,159 @@
-.SideMenu-Component {
-    display: flex;
-    flex-direction: column;
-    width: 300px;
-    height: 100%;
-    background-color: #e4e2eb;
-    transition: 0.5s;
-    overflow: hidden;
+@use "../settings" as *;
+@use "../mixins" as *;
 
-    &>*:not(.Title-Container), .Logo-Container { transition: 0.3s; }
+.SideMenu-Component {
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    position: relative;
+    transition: 0.3s;
+
+    &:not(.Hidden-Menu) { background-color: rgba(black, 0.5); }
+    
+    @include ScreenMinWidth(800px) {
+        position: fixed;
+        z-index: 1000;
+
+        &:not(.Hidden-Menu) { pointer-events: auto; }
+    }
 
     &.Hidden-Menu {
-        width: 56px;
-        height: 100%;
-        position: absolute;
-        background-color: transparent;
         
-        &>*:not(.Title-Container), .Logo-Container { opacity: 0; }
+        .Menu-Container {
+            width: 56px;
+            height: 100%;
+            position: absolute;
+            background-color: transparent;
+            
+            &>*:not(.Title-Container), .Logo-Container { opacity: 0; display: none; }
+        }
     }
 
-    .Title-Container {
+    .Menu-Container {
+        font-family: inherit;
         display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 8px;
-        padding: 16px;
+        flex-direction: column;
+        width: 300px;
+        height: 100%;
+        background-color: #e4e2eb;
+        transition: 0.3s;
+        overflow: hidden;
         user-select: none;
+        pointer-events: auto;
 
-        .Logo-Container {
+        &>*:not(.Title-Container), .Logo-Container { transition: 0.3s; }
+
+        .Title-Container {
             display: flex;
             align-items: center;
+            justify-content: space-between;
             gap: 8px;
-            min-width: 0;
-            flex-shrink: 1;
-            overflow: hidden;
-            
-            .Isotype { height: 30px; }
-            .Logo { height: 24px; }
-        }
+            padding: 16px;
+            user-select: none;
 
-        .Hide-Button {
-            width: 24px;
-            height: 24px;
-            padding: 0;
-            flex-shrink: 0;
-            
-            img { 
-                width: 100%;
-                height: 100%; 
-                object-fit: contain;
-            }
-        }
-    }
-
-    .List-Container {
-        height: 100%;
-        flex: 1;
-        overflow-y: auto;
-        user-select: none;
-
-        li {
-            display: grid;
-            grid-template-columns: 1fr auto;
-            animation: Button-Appears 0.5s ease forwards;
-
-            &.Active { background-color: #c7b8d6; }
-
-            &:hover, &.Hover { 
-                background-color: #d4d1de; 
-                .Options-Button { visibility: visible;}
+            .Logo-Container {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                min-width: 0;
+                flex-shrink: 1;
+                overflow: hidden;
+                
+                .Isotype { height: 30px; }
+                .Logo { height: 24px; }
             }
 
-            .Options-Button { 
-                width: 32px;
-                padding: 4px;
-
-                img {
+            .Hide-Button {
+                width: 24px;
+                height: 24px;
+                padding: 0;
+                flex-shrink: 0;
+                backdrop-filter: blur(3px);
+                
+                img { 
                     width: 100%;
-                    height: 100%;
+                    height: 100%; 
+                    object-fit: contain;
                 }
             }
         }
-    }
 
-    button {
-        width: 100%;
-        height: 32px;
-        text-align: left;
-        font-size: 16px;
-        background-color: inherit;
-        padding: 0px 16px;
-        border: 0px;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        cursor: pointer;
-    }
+        .List-Container {
+            height: 100%;
+            flex: 1;
+            overflow-y: auto;
+            user-select: none;
 
-    .Action-Buttons {
-        button {
-            display: flex;
-            align-items: center;
-            gap: 8px;
+            li {
+                display: grid;
+                grid-template-columns: 1fr auto;
+                animation: Button-Appears 0.5s ease forwards;
 
-            img { width: 16px; }
-            &:hover { background-color: #d4d1de; }
+                &.Active { background-color: #c7b8d6; }
+
+                &:hover, &.Hover { 
+                    background-color: #d4d1de; 
+                    .Options-Button { visibility: visible;}
+                }
+
+                .Options-Button { 
+                    width: 32px;
+                    padding: 4px;
+
+                    img {
+                        width: 100%;
+                        height: 100%;
+                    }
+                }
+            }
         }
-    }
 
-    .Context-Menu {
-        background-color: $SurfaceColor;
-        position: absolute;
-        overflow: hidden;
-        border-radius: 8px;
-        min-width: 150px;
-        transform: scaleY(0);
-        transform-origin: top;
-        transition: transform 0.2s;
-        filter: $Shadow;
+        button {
+            width: 100%;
+            height: 32px;
+            text-align: left;
+            font-size: 16px;
+            background-color: inherit;
+            padding: 0px 16px;
+            border: 0px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            cursor: pointer;
+        }
 
-        &.Visible { transform: scaleY(1); }
-        button:hover { background-color: #e4e2eb; }
+        .Action-Buttons {
+            button {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+
+                img { width: 16px; }
+                &:hover { background-color: #d4d1de; }
+            }
+        }
+
+        .Context-Menu {
+            background-color: $SurfaceColor;
+            position: absolute;
+            overflow: hidden;
+            border-radius: 8px;
+            min-width: 150px;
+            transform: scaleY(0);
+            transform-origin: top;
+            transition: transform 0.2s;
+            filter: $Shadow;
+
+            &.Visible { transform: scaleY(1); }
+            button:hover { background-color: #e4e2eb; }
+        }
     }
 }
 
 hr { 
     height: 2px; 
     margin: 8px 16px;
-    background-color: $BorderColor;
+    background-color: rgba(black, 0.1);
     border: 0;
     border-radius: 50px;
 }

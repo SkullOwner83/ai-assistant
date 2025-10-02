@@ -54,106 +54,100 @@ export const SideMenu: React.FC<SideMenuProps> = ({
 
     return (
         <div className={`SideMenu-Component ${!isOpen ? "Hidden-Menu" : ""}`}>
-            <div className="Title-Container">
-                <div className="Logo-Container">
-                    <img src="ai-logo.svg" className="Isotype" draggable="false" alt="AI Assistant isotipo."/>
-                    <img src="ai-assistant.svg" className="Logo" draggable="false" alt="AI Assistant logotipo"/>
+            <div className="Menu-Container">
+                <div className="Title-Container">
+                    <div className="Logo-Container">
+                        <img src="ai-logo.svg" className="Isotype" draggable="false" alt="AI Assistant isotipo."/>
+                        <img src="ai-assistant.svg" className="Logo" draggable="false" alt="AI Assistant logotipo"/>
+                    </div>
+                    <button className="Hide-Button" onClick={()=> onToggle?.()}>
+                        <img src="Side Menu.svg" draggable="false" alt="Bóton para ocultar menu."/>
+                    </button>
                 </div>
-
-                <button className="Hide-Button" onClick={()=> onToggle?.()}>
-                    <img src="Side Menu.svg" draggable="false" alt="Bóton para ocultar menu."/>
-                </button>
-            </div>
-
-            <div className="Action-Buttons">
-                <button onClick={() => onSelectedItem?.(null)}>
-                    <img src="New.svg" alt="Botón para crear nueva conversación"/>
-                    <p>Nueva conversación</p>
-                </button>
-                <hr/>
-            </div>
-
-            <ul className="List-Container">
-                {items.map((item) => {
-                    const showOptionsButton = menu.visible && menu.conversation?.idConversation == item.idConversation;
-                    
-                    return(
-                        <li key={item.idConversation} className={`${selectedItem == item ? "Active" : ""} ${showOptionsButton ? "Hover" : ""}`}>
-                            <button onClick={() => {
-                                if (editingConversationId !== item.idConversation) {
-                                    onSelectedItem?.(item);
-                                }
-                            }}>
-                                <EditableLabel
-                                    isEditable={editingConversationId == item.idConversation ? true : false}
-                                    onCancel={() => setEditingConversationId(null)}
-                                    onTextChanged={(t) => {
-                                        onRenameConversation?.(item, t);
-                                        setEditingConversationId(null);
-                                    }}
-                                >
-                                    {item.title}
-                                </EditableLabel>
-                            </button>
-
-                            <button className={`Options-Button ${showOptionsButton ? "Visible": "Hidden"}`}
-                                    onClick={(e) => { handleContextMenu(e, item) }}>
-                                <img src="options.svg" alt="Boton para desplegar opciones."/>
-                            </button>
-                        </li>
-                    )
-                })}
-            </ul>
-
-            <ul className={`Context-Menu ${menu.visible ? "Visible" : "Hidden"}`} 
-                style={{top: menu.y, left: menu.x}}
-                onClick={(e) => { e.stopPropagation(); setMenu({visible: false, x: 0, y: 0}) }}>
-                <li><button onClick={() => {
-                    if (menu.conversation) { 
-                        setEditingConversationId(menu.conversation.idConversation);
-                    }
-                }}>
-                    Renombrar
-                </button></li>
-
-                <li><button>Archivar</button></li>
-
-                <li><button onClick={() => {
-                    if (menu.conversation) onDownloadConversation?.(menu.conversation)
-                }}>
-                    Descargar
-                </button></li>
+                <div className="Action-Buttons">
+                    <button onClick={() => onSelectedItem?.(null)}>
+                        <img src="New.svg" alt="Botón para crear nueva conversación"/>
+                        <p>Nueva conversación</p>
+                    </button>
+                    <hr/>
+                </div>
+                <ul className="List-Container">
+                    {items.map((item) => {
+                        const showOptionsButton = menu.visible && menu.conversation?.idConversation == item.idConversation;
                 
-                <li><button onClick={() => {
-                    setIsModalOpen(true);
-                    setModalContent(
-                        <div>
-                            <h1>Confirmar eliminación</h1>
-                            <p>Estas seguro que deseas eliminar la conversación <strong>{menu.conversation?.title}</strong></p>
-                            
-                            <div className="Modal-Buttons">
-                                <button className="Cancel-Button" onClick={() => setIsModalOpen(false)}>Cancelar</button>
-                                <button 
-                                    className="Delete-Button"
-                                    onClick={() => {
-                                        if (menu.conversation) {
-                                            onDeleteConversation?.(menu.conversation);
-                                            setIsModalOpen(false);
-                                        }
-                                    }}>
-                                    Confirmar
+                        return(
+                            <li key={item.idConversation} className={`${selectedItem == item ? "Active" : ""} ${showOptionsButton ? "Hover" : ""}`}>
+                                <button onClick={() => {
+                                    if (editingConversationId !== item.idConversation) {
+                                        onSelectedItem?.(item);
+                                    }
+                                }}>
+                                    <EditableLabel
+                                        isEditable={editingConversationId == item.idConversation ? true : false}
+                                        onCancel={() => setEditingConversationId(null)}
+                                        onTextChanged={(t) => {
+                                            onRenameConversation?.(item, t);
+                                            setEditingConversationId(null);
+                                        }}
+                                    >
+                                        {item.title}
+                                    </EditableLabel>
                                 </button>
+                                <button className={`Options-Button ${showOptionsButton ? "Visible": "Hidden"}`}
+                                        onClick={(e) => { handleContextMenu(e, item) }}>
+                                    <img src="options.svg" alt="Boton para desplegar opciones."/>
+                                </button>
+                            </li>
+                        )
+                    })}
+                </ul>
+                <ul className={`Context-Menu ${menu.visible ? "Visible" : "Hidden"}`}
+                    style={{top: menu.y, left: menu.x}}
+                    onClick={(e) => { e.stopPropagation(); setMenu({visible: false, x: 0, y: 0}) }}>
+                    <li><button onClick={() => {
+                        if (menu.conversation) {
+                            setEditingConversationId(menu.conversation.idConversation);
+                        }
+                    }}>
+                        Renombrar
+                    </button></li>
+                    
+                    <li><button onClick={() => {
+                        if (menu.conversation) onDownloadConversation?.(menu.conversation)
+                    }}>
+                        Descargar
+                    </button></li>
+                
+                    <li><button onClick={() => {
+                        setIsModalOpen(true);
+                        setModalContent(
+                            <div>
+                                <h1>Confirmar eliminación</h1>
+                                <p>Estas seguro que deseas eliminar la conversación <strong>{menu.conversation?.title}</strong></p>
+                
+                                <div className="Modal-Buttons">
+                                    <button className="Cancel-Button" onClick={() => setIsModalOpen(false)}>Cancelar</button>
+                                    <button
+                                        className="Delete-Button"
+                                        onClick={() => {
+                                            if (menu.conversation) {
+                                                onDeleteConversation?.(menu.conversation);
+                                                setIsModalOpen(false);
+                                            }
+                                        }}>
+                                        Confirmar
+                                    </button>
+                                </div>
                             </div>
-                        </div>
-                    )
-                }}>
-                    Eliminar
-                </button></li>
-            </ul>
-
-            <Modal isOpen={isModalOpen} onClose={() => {setIsModalOpen(!isModalOpen)}}>
-                {modalContent}
-            </Modal>
+                        )
+                    }}>
+                        Eliminar
+                    </button></li>
+                </ul>
+                <Modal isOpen={isModalOpen} onClose={() => {setIsModalOpen(!isModalOpen)}}>
+                    {modalContent}
+                </Modal>
+            </div>
         </div>
     )
 }

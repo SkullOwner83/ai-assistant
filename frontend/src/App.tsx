@@ -9,7 +9,7 @@ import type { Conversation } from './interfaces/conversation';
 const App: React.FC = () => {
     const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
     const [modalMessage, setModalMessage] = useState<string | null>(null);
-    const VALID_FILES = ["plain", "pdf"]
+    const VALID_FILES = ["txt", "pdf", "docx"]
 
     const {
         sideMenu,
