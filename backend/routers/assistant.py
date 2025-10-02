@@ -1,4 +1,6 @@
 import os
+from pathlib import Path
+from utils.file import File
 from typing import Optional
 from fastapi import APIRouter, Depends, Form, HTTPException, UploadFile, status
 from sqlalchemy.orm import Session
@@ -6,13 +8,11 @@ from infraestructure.database import open_connection
 from infraestructure.ia_client import IAClient
 from services.chat_service import ChatService
 from schemas.askresponse_schema import AskResponseSchema
-from services.rag_service import RAGService
 from models.conversation import Conversation
-from utils.file import File
+from services.services import rag_service
 
 API_KEY = os.getenv('API_KEY')
 ai_client = IAClient(API_KEY)
-rag_service = RAGService()
 chat_service = ChatService()
 
 router = APIRouter(
@@ -32,7 +32,8 @@ async def ask(question: str = Form(...), conversation_id: Optional[int] = Form(N
         
         file_hash = File.get_hash(file)
         await rag_service.process_file(file)
-        conversation_created = await chat_service.create_conversation(question[:50], file_hash, db_session)
+        conversation_name = f"{Path(file.filename).stem} - {question[:50]}"
+        conversation_created = await chat_service.create_conversation(conversation_name, file_hash, db_session)
         conversation_id = conversation_created.idConversation
     else:
         conversation = db_session.query(Conversation).filter_by(idConversation=conversation_id).first()

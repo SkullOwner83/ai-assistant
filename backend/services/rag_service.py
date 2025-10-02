@@ -4,8 +4,8 @@ import chromadb
 from uuid import uuid4
 from fastapi import UploadFile
 from datetime import datetime, timezone
-from services.embeddings import Embeddings
 from services.dataset_procesator import DatasetProcesator
+from services.embeddings import Embeddings
 from utils.file import File
 
 class RAGService():
@@ -55,3 +55,6 @@ class RAGService():
             return results['documents'][0]
         
         return []
+    
+    def delete_file(self, file_hash: str) -> None:
+        self.chroma_collection.delete(where={'source': file_hash})

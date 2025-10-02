@@ -2,7 +2,7 @@ import hashlib
 from fastapi import UploadFile
 
 MAX_SIZE = 500
-ALLOWED_EXTENSIONS = ['txt', 'pdf']
+ALLOWED_EXTENSIONS = ['txt', 'pdf', 'docx']
 
 class File():
 

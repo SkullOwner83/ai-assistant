@@ -7,6 +7,7 @@ from models.conversation import Conversation
 from infraestructure.database import open_connection
 from schemas.conversation_schema import ConversationSchema
 from models.message import Message
+from services.services import rag_service
 
 router = APIRouter(
     prefix="/conversations",
@@ -37,6 +38,7 @@ async def update_conversation(conversation: ConversationSchema, db: Session = De
 @router.delete('/', status_code=status.HTTP_204_NO_CONTENT)
 async def delete_conversations(conversation_id: int, db: Session = Depends(open_connection)) -> None:
     conversation = db.query(Conversation).filter(Conversation.idConversation==conversation_id).first()
+    file_hash = conversation.fileHash
     
     if not conversation:
         raise HTTPException(status_code=404, detail="The conversation was not found.")
@@ -44,6 +46,7 @@ async def delete_conversations(conversation_id: int, db: Session = Depends(open_
     db.query(Message).filter(Message.conversationId==conversation_id).delete()
     db.delete(conversation)
     db.commit()
+    rag_service.delete_file(file_hash)
     return Response(status_code=status.HTTP_204_NO_CONTENT)
 
 @router.get('/download', status_code=status.HTTP_200_OK)
