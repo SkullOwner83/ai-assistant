@@ -1,11 +1,12 @@
 const { app, BrowserWindow } = require('electron');
 const { spawn, exec } = require('child_process');
+const axios = require('axios')
 const waitPort = require('wait-port');
 const path = require('path');
 
 let backendProcess;
 
-function createWindow() {
+async function createWindow() {
     let win = new BrowserWindow({
         width: 1280,
         height: 720,
@@ -15,7 +16,7 @@ function createWindow() {
         }
     });
 
-    //win.setMenu(null)
+    win.setMenu(null)
 
     const backendExe = path.join(__dirname, '..', 'backend', 'dist', 'ai_assistant.exe');
 
@@ -27,16 +28,30 @@ function createWindow() {
     backendProcess.stdout.on('data', data => console.log('[BACKEND]', data.toString()));
     backendProcess.stderr.on('data', data => console.error('[BACKEND ERROR]', data.toString()));
 
-    waitPort({ host: '127.0.0.1', port: 8000, timeout: 10000 })
-        .then((open) => {
-            if (open) {
-                win.loadFile(path.join(__dirname, '../frontend/build/index.html'));
-            } else {
-                console.error("El backend no levantó el puerto 8000");
-            }
-        });
+    const ready = await waitForBackendReady();
+
+    if (ready) {
+        win.loadFile(path.join(__dirname, '../frontend/build/index.html'));
+    } else {
+        console.error("El backend no respondio a tiempo.");
+    }
 
     win.on('closed', () => cleanupBackend());
+}
+
+async function waitForBackendReady(maxRetries = 50) {
+    for(let i = 0; i < maxRetries; i++) {
+        console.log(`Loading... ${i}`);
+
+        try {
+            const response = await axios.get('http://127.0.0.1:8000/health');
+            if (response.status === 200) return true;
+        } catch (_) {}
+        
+        await new Promise(resolve => setTimeout(resolve, 1000));
+    }
+
+    return false;
 }
 
 function cleanupBackend() {
