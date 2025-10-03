@@ -1,0 +1,43 @@
+
+{
+  "name": "ai-assistant",
+  "version": "1.0.0",
+  "main": "electron/main.js",
+  "devDependencies": {
+    "electron": "38.2.0",
+    "electron-builder": "26.0.12"
+  },
+  "scripts": {
+    "start": "electron .",
+    "pack": "electron-builder --dir",
+    "dist": "electron-builder"
+  },
+  "build": {
+    "appId": "com.skullowner.aiassistant",
+    "productName": "AI Assistant",
+    "directories": {
+      "buildResources": "assets",
+      "output": "build"
+    },
+    "asar": true,
+    "files": [
+      "frontend/build/**/*",
+      "electron/**/*",
+      "backend/**/*",
+      "!backend/venv/**/*"
+    ]
+  },
+  "files": [
+      "frontend/build/**/*",
+      "electron/**/*",
+      "backend/**/*",
+      "package.json"
+    ],
+    "win": {
+      "target": "nsis",
+      "icon": "assets/ai-logo.ico"
+    },
+  "dependencies": {
+    "wait-port": "1.1.0"
+  }
+}

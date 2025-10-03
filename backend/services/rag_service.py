@@ -1,3 +1,5 @@
+import os
+from pathlib import Path
 from typing import Optional
 import numpy as np
 import chromadb
@@ -10,8 +12,10 @@ from utils.file import File
 
 class RAGService():
     def __init__(self):
+        data_dir = Path(os.getenv('LOCALAPPDATA')) / "AI Assistant" / "chroma"
+        data_dir.mkdir(parents=True, exist_ok=True)
         self.embeddings_service = Embeddings()
-        self.chroma_client = chromadb.PersistentClient()
+        self.chroma_client = chromadb.PersistentClient(path=data_dir)
         self.chroma_collection = self.chroma_client.get_or_create_collection(name='Documents')
 
     async def process_file(self, file: UploadFile) -> None:
