@@ -1,7 +1,13 @@
+/build
+/node_modules
+
 /backend/.env
 /backend/__pycache__/
 /backend/*.pyc
 /backend/chroma/
 /backend/venv/
+/backend/
+/backend/build/
 
 /frontend/node_modules/
+/frontend/build/
