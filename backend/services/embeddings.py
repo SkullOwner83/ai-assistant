@@ -27,15 +27,6 @@ class Embeddings():
         vector = embedding.squeeze().numpy()
         return vector
     
-        # text = text.replace('\n', ' ')
-        # embeddings = self.openai.embeddings.create(
-        #     model='text-embedding-3-small',
-        #     input=text,
-        #     encoding_format='float'
-        # )
-
-        # return embeddings.data[0].embedding
-    
     # Generate a file with the vector representation of a text to be used as input to the model
     def get_document_embeddings(self, chunks: List[Document]) -> List[List[float]]:
         embeddings_list = []

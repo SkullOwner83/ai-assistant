@@ -1,6 +1,8 @@
 {
-  "name": "ai-assistant",
+  "name": "ai_assistant",
+  "productName": "AI Assistant",
   "version": "1.0.0",
+  "description": "Virtual assistant with artificial intelligence, capable of generating and retrieving file embeddings to perform semantic searches.",
   "main": "electron/main.js",
   "devDependencies": {
     "electron": "38.2.0",
@@ -8,9 +10,13 @@
   },
   "scripts": {
     "dev": "electron .",
-    "pack": "electron-builder --dir",
     "build": "electron-builder"
   },
+  "author": {
+    "name": "Javier Guzmán Cruz",
+    "email": "javierguzman.dev@gmail.com"
+  },
+  "license": "MIT",
   "build": {
     "appId": "com.skullowner.aiassistant",
     "productName": "AI Assistant",
@@ -32,8 +38,14 @@
     "win": {
       "target": "nsis",
       "icon": "assets/ai-logo.ico"
+    },
+    "nsis": {
+      "oneClick": false,
+      "license": "LICENSE",
+      "allowToChangeInstallationDirectory": true
     }
   },
+  
   "dependencies": {
     "axios": "1.12.2",
     "electron-is-dev": "3.0.1",

@@ -1,3 +1,4 @@
+import logging
 import tempfile
 from typing import List
 from fastapi import APIRouter, Depends, HTTPException, Response, status
@@ -9,6 +10,8 @@ from schemas.conversation_schema import ConversationSchema
 from models.message import Message
 from services.services import rag_service
 
+logger = logging.getLogger(__name__)
+
 router = APIRouter(
     prefix="/conversations",
     tags=["conversations"]
@@ -19,6 +22,7 @@ async def get_conversations(db: Session = Depends(open_connection)) -> List[Conv
     conversations = db.query(Conversation).all()
 
     if not conversations:
+        logger.exception("There is no conversation yet.")
         raise HTTPException(status_code=404, detail="There is no conversation yet.")
 
     return conversations
@@ -28,6 +32,7 @@ async def update_conversation(conversation: ConversationSchema, db: Session = De
     db_conversation = db.query(Conversation).filter(Conversation.idConversation==conversation.idConversation).first()
 
     if not db_conversation:
+        logger.exception("The conversation with the id %s was not found while trying to update it.", conversation.idConversation)
         raise HTTPException(status_code=404, detail='The conversation was not found.')
     
     db_conversation.title = conversation.title
@@ -41,6 +46,7 @@ async def delete_conversations(conversation_id: int, db: Session = Depends(open_
     file_hash = conversation.fileHash
     
     if not conversation:
+        logger.exception("The conversation with the id %s was not found while trying to delete it.", conversation_id)
         raise HTTPException(status_code=404, detail="The conversation was not found.")
 
     db.query(Message).filter(Message.conversationId==conversation_id).delete()
@@ -54,6 +60,7 @@ async def download_conversation(conversation_id: int, db: Session = Depends(open
     conversation = db.query(Conversation).filter(Conversation.idConversation==conversation_id).first()
 
     if not conversation:
+        logger.exception("The conversation with the id %s was not found while trying to download it.", conversation_id)
         raise HTTPException(status_code=404, detail="The conversation was not found.")
     
     filename = f'{conversation.title}.txt'

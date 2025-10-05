@@ -15,6 +15,7 @@ async function createWindow() {
             ? path.join(process.resourcesPath, '..', 'assets', 'ai-logo.png')
             : path.join(process.resourcesPath, 'assets', 'ai-logo.png'),
         webPreferences: {
+            devTools: false,
             contextIsolation: true,
             nodeIntegration: false
         }
@@ -25,8 +26,6 @@ async function createWindow() {
     const backendExe = isDev
         ? path.join(__dirname, '..', 'backend', 'dist', 'ai_assistant.exe')
         : path.join(process.resourcesPath, 'backend', 'ai_assistant.exe');
-
-    const { dialog } = require('electron');
 
     backendProcess = spawn(backendExe, [], {
         cwd: isDev 
