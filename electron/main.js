@@ -1,28 +1,38 @@
 const { app, BrowserWindow } = require('electron');
 const { spawn, exec } = require('child_process');
 const axios = require('axios')
-const waitPort = require('wait-port');
 const path = require('path');
 
 let backendProcess;
+const isDev = !app.isPackaged;
 
 async function createWindow() {
     let win = new BrowserWindow({
+        title: 'AI Assistant',
         width: 1280,
         height: 720,
+        icon: isDev 
+            ? path.join(process.resourcesPath, '..', 'assets', 'ai-logo.png')
+            : path.join(process.resourcesPath, 'assets', 'ai-logo.png'),
         webPreferences: {
             contextIsolation: true,
             nodeIntegration: false
         }
     });
 
-    win.setMenu(null)
+    win.setMenu(null);
 
-    const backendExe = path.join(__dirname, '..', 'backend', 'dist', 'ai_assistant.exe');
+    const backendExe = isDev
+        ? path.join(__dirname, '..', 'backend', 'dist', 'ai_assistant.exe')
+        : path.join(process.resourcesPath, 'backend', 'ai_assistant.exe');
 
-    backendProcess = spawn(`"${backendExe}"`, [], {
-        cwd: path.join(__dirname, '..', 'backend'),
-        shell: true
+    const { dialog } = require('electron');
+
+    backendProcess = spawn(backendExe, [], {
+        cwd: isDev 
+            ? path.join(__dirname, '..', 'backend')
+            : path.join(process.resourcesPath, 'backend'),
+        shell: false
     });
 
     backendProcess.stdout.on('data', data => console.log('[BACKEND]', data.toString()));
@@ -31,7 +41,10 @@ async function createWindow() {
     const ready = await waitForBackendReady();
 
     if (ready) {
-        win.loadFile(path.join(__dirname, '../frontend/build/index.html'));
+        win.loadFile(isDev
+            ? path.join(__dirname, '..', 'frontend', 'build', 'index.html')
+            : path.join(app.getAppPath(), 'frontend', 'build', 'index.html')
+        );
     } else {
         console.error("El backend no respondio a tiempo.");
     }
@@ -60,7 +73,7 @@ function cleanupBackend() {
         backendProcess = null;
     }
 
-    exec('taskkill /IM ai_assistant.exe /F', (err, stdout, stderr) => {
+    exec(`taskkill /IM ai_assistant.exe /F`, (err, stdout, stderr) => {
         if (err) console.error(err);
     });
 }
