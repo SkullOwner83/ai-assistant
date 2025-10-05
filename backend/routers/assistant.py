@@ -1,3 +1,4 @@
+import logging
 import os
 from pathlib import Path
 from utils.file import File
@@ -5,7 +6,7 @@ from typing import Optional
 from fastapi import APIRouter, Depends, Form, HTTPException, UploadFile, status
 from sqlalchemy.orm import Session
 from infraestructure.database import open_connection
-from infraestructure.ia_client import IAClient
+from infraestructure.ai_client import IAClient
 from services.chat_service import ChatService
 from schemas.askresponse_schema import AskResponseSchema
 from models.conversation import Conversation
@@ -14,6 +15,7 @@ from services.services import rag_service
 API_KEY = os.getenv('API_KEY')
 ai_client = IAClient(API_KEY)
 chat_service = ChatService()
+logger = logging.getLogger(__name__)
 
 router = APIRouter(
     prefix="/assistant",
@@ -27,8 +29,13 @@ async def ask(question: str = Form(...), conversation_id: Optional[int] = Form(N
 
     # Create a new conversation and process the attached file
     if not conversation_id:
-        if not file: raise HTTPException(status_code=404, detail="No se ha proporcionado un archivo para trabajarlo.")
-        if not File.validate(file): raise HTTPException(status_code=404, detail="El archivo no es valido.")
+        if not file: 
+            logger.exception("No file has been provided to work with.")
+            raise HTTPException(status_code=404, detail="No file has been provided to work with.")
+        
+        if not File.validate(file): 
+            logger.exception("The file is not valid: %s.", file)
+            raise HTTPException(status_code=404, detail="The file is not valid.")
         
         file_hash = File.get_hash(file)
         await rag_service.process_file(file)
@@ -38,8 +45,13 @@ async def ask(question: str = Form(...), conversation_id: Optional[int] = Form(N
     else:
         conversation = db_session.query(Conversation).filter_by(idConversation=conversation_id).first()
 
-        if not conversation: raise HTTPException(status_code=404, detail="No se encontró archivo asociado a la conversación.")
-        if not conversation.fileHash: raise HTTPException(status_code=404, detail="La conversación no tiene un dataset ligado para trabajar.")
+        if not conversation: 
+            logger.exception("The conversation with the id %s was not found", conversation_id)
+            raise HTTPException(status_code=404, detail="The conversation was not found.")
+
+        if not conversation.fileHash: 
+            logger.exception("No file was found associated with the conversation with the id %s.", conversation_id)
+            raise HTTPException(status_code=404, detail="No file associated with the conversation was found.")
 
         file_hash = conversation.fileHash
 
@@ -52,7 +64,7 @@ async def ask(question: str = Form(...), conversation_id: Optional[int] = Form(N
         prompt = f"Context: {context}\n\nQuestion: {question}" if context else f"question: {question}"
         response = await ai_client.ask(prompt)
     except Exception as e:
-        print(f"Error. No se pudo generar una respuesta: {e}")
+        logger.exception("Could not generate a response: %s.", e)
         response = results[0] if results and len(results) > 0 else "No se encontró información relevante."
 
 

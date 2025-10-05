@@ -1,3 +1,4 @@
+import logging
 import tempfile
 from typing import List, Optional
 from fastapi import UploadFile
@@ -6,6 +7,8 @@ from langchain.docstore.document import Document
 from langchain_community.document_loaders.pdf import PDFPlumberLoader
 from langchain.document_loaders import UnstructuredWordDocumentLoader
 from pathlib import Path
+
+logger = logging.getLogger(__name__)
 
 class DatasetProcesator():
     @staticmethod
@@ -35,7 +38,8 @@ class DatasetProcesator():
                 documents = loader.load()
 
             case _:
-                raise ValueError(f"Formato no soportado: {file.filename}")
+                logger.exception(f"Unsupported format: {file}")
+                raise ValueError(f"Unsupported format.")
 
         return documents
 
