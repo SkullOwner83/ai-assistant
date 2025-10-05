@@ -1,21 +1,20 @@
 import os
-from urllib import parse
 from dotenv import load_dotenv
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, declarative_base
+from sqlalchemy.orm import DeclarativeMeta
+
 
 load_dotenv()
-DB_USER = os.getenv('DB_USER')
-DB_PASSWORD = os.getenv('DB_PASSWORD')
-DB_HOST = os.getenv('DB_HOST')
-DB_NAME = os.getenv('DB_NAME')
-DB_PORT = os.getenv('DB_PORT')
-DB_PASSWORD_ENCODED = parse.quote(DB_PASSWORD)
+appdata_dir = os.path.join(os.getenv('LOCALAPPDATA'), 'AI Assistant')
+os.makedirs(appdata_dir, exist_ok=True)
+sqlite_path = os.path.join(appdata_dir, 'data.sqlite3')
 
-DB_URL = f"mysql+pymysql://{DB_USER}:{DB_PASSWORD_ENCODED}@{DB_HOST}:3306/{DB_NAME}"
-engine = create_engine(DB_URL, echo=True)
+DB_URL = f"sqlite:///{sqlite_path}"
+engine = create_engine(DB_URL, echo=True, connect_args={"check_same_thread": False})
 SessionLocal = sessionmaker(bind=engine, autoflush=False)
-Base = declarative_base()
+Base: DeclarativeMeta = declarative_base()
+Base.metadata.create_all(bind=engine)
 
 def open_connection():
     db = SessionLocal()
