@@ -3,6 +3,8 @@ import type { Conversation } from '../interfaces/conversation'
 import type { ContextMenu } from '../interfaces/context_menu'
 import { Modal } from './modal'
 import { EditableLabel } from './editable_label'
+import { ConfigModal } from './config_modal'
+import { DeleteModal } from './delete_modal'
 
 interface SideMenuProps {
     isOpen: boolean,
@@ -101,6 +103,7 @@ export const SideMenu: React.FC<SideMenuProps> = ({
                         )
                     })}
                 </ul>
+
                 <ul className={`Context-Menu ${menu.visible ? "Visible" : "Hidden"}`}
                     style={{top: menu.y, left: menu.x}}
                     onClick={(e) => { e.stopPropagation(); setMenu({visible: false, x: 0, y: 0}) }}>
@@ -120,30 +123,21 @@ export const SideMenu: React.FC<SideMenuProps> = ({
                 
                     <li><button onClick={() => {
                         setIsModalOpen(true);
-                        setModalContent(
-                            <div>
-                                <h1>Confirmar eliminación</h1>
-                                <p>Estas seguro que deseas eliminar la conversación <strong>{menu.conversation?.title}</strong></p>
-                
-                                <div className="Modal-Buttons">
-                                    <button className="Cancel-Button" onClick={() => setIsModalOpen(false)}>Cancelar</button>
-                                    <button
-                                        className="Delete-Button"
-                                        onClick={() => {
-                                            if (menu.conversation) {
-                                                onDeleteConversation?.(menu.conversation);
-                                                setIsModalOpen(false);
-                                            }
-                                        }}>
-                                        Confirmar
-                                    </button>
-                                </div>
-                            </div>
-                        )
+                        setModalContent(<DeleteModal 
+                            description={`Estas seguro que deseas eliminar la conversación **${menu.conversation?.title}**`}
+                            onCancel={() => setIsModalOpen(false)}
+                            onDelete={() => {
+                                if (menu.conversation) {
+                                    onDeleteConversation?.(menu.conversation);
+                                    setIsModalOpen(false);
+                                }
+                            }}
+                        />);
                     }}>
                         Eliminar
                     </button></li>
                 </ul>
+
                 <Modal isOpen={isModalOpen} onClose={() => {setIsModalOpen(!isModalOpen)}}>
                     {modalContent}
                 </Modal>
