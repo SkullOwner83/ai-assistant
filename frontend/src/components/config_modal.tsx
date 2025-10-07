@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import type { Config } from '../interfaces/config';
 
 interface ConfigModalProps {
@@ -9,6 +9,9 @@ interface ConfigModalProps {
 
 export const ConfigModal: React.FC<ConfigModalProps> = ({ initialValue, onSave, onCancel }) => {
     const [config, setConfig] = useState<Config>({ ...initialValue });
+    useEffect(() => {
+        console.log(config)
+    }, [config])
 
     const handleChange = (field: keyof Config, value: string) => {
         setConfig((prev) => ({
@@ -16,6 +19,17 @@ export const ConfigModal: React.FC<ConfigModalProps> = ({ initialValue, onSave, 
             [field]: value
         }));
     }
+
+    useEffect(() => {
+        const handleClose = (e: KeyboardEvent) => {
+            if (e.key === "Escape") {
+                onCancel?.();
+            }
+        }
+
+        window.addEventListener("keydown", handleClose);
+        return () => window.removeEventListener("keydown", handleClose);
+    }, [onCancel]);
 
     return (
         <div className="Config-Modal">

@@ -67,17 +67,35 @@ export const SideMenu: React.FC<SideMenuProps> = ({
                         <img src="ai-logo.svg" className="Isotype" draggable="false" alt="AI Assistant isotipo."/>
                         <img src="ai-assistant.svg" className="Logo" draggable="false" alt="AI Assistant logotipo"/>
                     </div>
+
                     <button className="Hide-Button" onClick={()=> onToggle?.()}>
                         <img src="Side Menu.svg" draggable="false" alt="Bóton para ocultar menu."/>
                     </button>
                 </div>
+
                 <div className="Action-Buttons">
                     <button onClick={() => onSelectedItem?.(null)}>
                         <img src="New.svg" alt="Botón para crear nueva conversación"/>
                         <p>Nueva conversación</p>
                     </button>
+                    <button onClick={() => {
+                        setIsModalOpen(true);
+                        setModalContent(<ConfigModal 
+                            key={Date.now()} // Force remount the component for refresh initialValue
+                            initialValue={config} 
+                            onCancel={() => setIsModalOpen(false)}
+                            onSave={(c) => {
+                                onSaveConfig?.(c);
+                                setIsModalOpen(false);
+                            }}
+                        />);
+                    }}>
+                        <img src="config.png" alt="Botón para crear nueva conversación"/>
+                        <p>Configuración</p>
+                    </button>
                     <hr/>
                 </div>
+
                 <ul className="List-Container">
                     {items.map((item) => {
                         const showOptionsButton = menu.visible && menu.conversation?.idConversation == item.idConversation;
@@ -142,21 +160,6 @@ export const SideMenu: React.FC<SideMenuProps> = ({
                         Eliminar
                     </button></li>
                 </ul>
-
-                <button onClick={() => {
-                    setIsModalOpen(true);
-                    setModalContent(<ConfigModal 
-                        key={Date.now()} // Force remount the component for refresh initialValue
-                        initialValue={config} 
-                        onCancel={() => setIsModalOpen(false)}
-                        onSave={(c) => {
-                            onSaveConfig?.(c);
-                            setIsModalOpen(false);
-                        }}
-                    />);
-                }}>
-                    Configuracion
-                </button>
 
                 <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(!isModalOpen)}>
                     {modalContent}

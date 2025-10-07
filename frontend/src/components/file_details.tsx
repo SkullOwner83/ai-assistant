@@ -33,7 +33,7 @@ export const FileDetails: React.FC<fileDetailsProps> = ({ file, onDelete }) => {
                 <img src={extensionImage(extension)} alt="Formato del archivo" draggable={false}/>
             </div>
 
-            <div className="File-information">
+            <div className="File-Information">
                 <p>{file.name}</p>
                 <p>{formatFileSize(file.size)}</p>
             </div>

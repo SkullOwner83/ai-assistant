@@ -11,12 +11,28 @@
 
     .Image-Container { 
         grid-column: 1; 
+        width: 64px;
+        height: 64px;
         padding: 8px;
 
-        img { width: 100%; }
+        img { 
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            display: block;
+        }
     }
 
-    .File-information { grid-column: 2; }
+    .File-Information {
+        grid-column: 2;
+        overflow: hidden;
+
+        p {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+    }
 
     button { 
         grid-column: 3; 
