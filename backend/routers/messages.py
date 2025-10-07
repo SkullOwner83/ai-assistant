@@ -3,9 +3,9 @@ from typing import List
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy import exists
 from sqlalchemy.orm import Session
-from models.conversation import Conversation
 from infraestructure.database import open_connection
 from models.message import Message
+from models.conversation import Conversation
 from schemas.messages_schema import MessageSchema
 
 logger = logging.getLogger(__name__)

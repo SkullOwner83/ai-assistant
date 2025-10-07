@@ -1,3 +1,5 @@
+import time
+start = time.perf_counter()
 import os
 import logging
 from dotenv import load_dotenv
@@ -6,9 +8,11 @@ from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
 from sqlalchemy import text
 from models.config import Config
+from services.rag_service import RAGService
 from infraestructure.database import open_connection, Base, engine
 from infraestructure.ai_client import IAClient
 from routers import *
+
 
 load_dotenv()
 app = FastAPI(docs_url=None)
@@ -24,9 +28,11 @@ log_path = os.path.join(appdata, 'backend.log')
 config_path = os.path.join(appdata, 'config.json')
 config = Config()
 config.load(config_path)
+
 app.state.config = config
 app.state.config_path = config_path
 app.state.ai_client = IAClient(api_key=config.apiKey, hf_model=config.hfModel)
+app.state.rag_service = RAGService()
 
 logging.basicConfig(
     level=logging.DEBUG,
@@ -60,3 +66,7 @@ async def health_check(db: Session = Depends(open_connection)):
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run(app, host="127.0.0.1", port=8000, workers=1)
+
+end = time.perf_counter()
+print("----------------------------------------------------------------------------")
+print(f"Tiempo de ejecución: {(end - start)*1000:.2f} ms") 

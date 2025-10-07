@@ -1,14 +1,13 @@
 import logging
 import tempfile
 from typing import List
-from fastapi import APIRouter, Depends, HTTPException, Response, status
+from fastapi import APIRouter, Depends, HTTPException, Response, Request, status
 from fastapi.responses import FileResponse
 from sqlalchemy.orm import Session
 from models.conversation import Conversation
 from infraestructure.database import open_connection
 from schemas.conversation_schema import ConversationSchema
 from models.message import Message
-from services.services import rag_service
 
 logger = logging.getLogger(__name__)
 
@@ -41,7 +40,7 @@ async def update_conversation(conversation: ConversationSchema, db: Session = De
     return Response(status_code=status.HTTP_204_NO_CONTENT)
 
 @router.delete('/', status_code=status.HTTP_204_NO_CONTENT)
-async def delete_conversations(conversation_id: int, db: Session = Depends(open_connection)) -> None:
+async def delete_conversations(request: Request, conversation_id: int, db: Session = Depends(open_connection)) -> None:
     conversation = db.query(Conversation).filter(Conversation.idConversation==conversation_id).first()
     file_hash = conversation.fileHash
     
@@ -52,6 +51,7 @@ async def delete_conversations(conversation_id: int, db: Session = Depends(open_
     db.query(Message).filter(Message.conversationId==conversation_id).delete()
     db.delete(conversation)
     db.commit()
+    rag_service = request.app.state.rag_service
     rag_service.delete_file(file_hash)
     return Response(status_code=status.HTTP_204_NO_CONTENT)
 

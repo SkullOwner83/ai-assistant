@@ -1,7 +1,7 @@
 import os
+import numpy as np
 from pathlib import Path
 from typing import Optional
-import numpy as np
 import chromadb
 from uuid import uuid4
 from fastapi import UploadFile

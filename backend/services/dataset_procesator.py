@@ -2,11 +2,8 @@ import logging
 import tempfile
 from typing import List, Optional
 from fastapi import UploadFile
-from langchain_text_splitters import RecursiveCharacterTextSplitter
-from langchain.docstore.document import Document
-from langchain_community.document_loaders.pdf import PDFPlumberLoader
-from langchain.document_loaders import UnstructuredWordDocumentLoader
 from pathlib import Path
+from langchain.docstore.document import Document
 
 logger = logging.getLogger(__name__)
 
@@ -19,6 +16,9 @@ class DatasetProcesator():
 
     @staticmethod
     async def process_file(file: UploadFile) -> List[Document]:
+        from langchain_community.document_loaders.pdf import PDFPlumberLoader
+        from langchain_community.document_loaders import UnstructuredWordDocumentLoader
+
         content = await file.read()
         extension = Path(file.filename).suffix.lower()
 
@@ -45,6 +45,8 @@ class DatasetProcesator():
 
     @staticmethod
     def chunk_text(text: str, chunk_size: Optional[int] = 300, chunk_overlap: Optional[int] = 50, separators: Optional[List[str]] = None):
+        from langchain_text_splitters import RecursiveCharacterTextSplitter
+
         if chunk_overlap >= chunk_size:
             chunk_overlap = chunk_size // 5
 
@@ -62,6 +64,8 @@ class DatasetProcesator():
     
     @staticmethod
     async def chunk_file(file: UploadFile, chunk_size: Optional[int] = 300, chunk_overlap: Optional[int] = 50, separators: Optional[List[str]] = None):
+        from langchain_text_splitters import RecursiveCharacterTextSplitter
+        
         if chunk_overlap >= chunk_size:
             chunk_overlap = chunk_size // 5
 

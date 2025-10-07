@@ -8,7 +8,6 @@ from infraestructure.database import open_connection
 from services.chat_service import ChatService
 from schemas.askresponse_schema import AskResponseSchema
 from models.conversation import Conversation
-from services.services import rag_service
 
 chat_service = ChatService()
 logger = logging.getLogger(__name__)
@@ -34,6 +33,7 @@ async def ask(request: Request, question: str = Form(...), conversation_id: Opti
             raise HTTPException(status_code=404, detail="The file is not valid.")
         
         file_hash = File.get_hash(file)
+        rag_service = request.app.state.rag_service
         await rag_service.process_file(file)
         conversation_name = f"{Path(file.filename).stem} - {question[:50]}"
         conversation_created = await chat_service.create_conversation(conversation_name, file_hash, db_session)

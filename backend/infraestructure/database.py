@@ -4,7 +4,6 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, declarative_base
 from sqlalchemy.orm import DeclarativeMeta
 
-
 load_dotenv()
 appdata_dir = os.path.join(os.getenv('LOCALAPPDATA'), 'AI Assistant')
 os.makedirs(appdata_dir, exist_ok=True)
