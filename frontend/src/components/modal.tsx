@@ -1,13 +1,34 @@
+import { useRef, useState } from "react";
+
 interface Modal {
     isOpen: boolean,
-    onClose: () => void,
+    onClose?: () => void,
     children?: React.ReactNode
 }
 
 export const Modal: React.FC<Modal> = ({ isOpen, onClose, children }) => {
+    const contentRef = useRef<HTMLDivElement>(null);
+    const [mouseDownOutside, setMouseDownOutside] = useState(false);
+
+    const handleMouseDown = (e: React.MouseEvent) => {
+        if (contentRef.current && !contentRef.current.contains(e.target as Node)) {
+            setMouseDownOutside(true);
+        } else {
+            setMouseDownOutside(false);
+        }
+    };
+
+    const handleMouseUp = () => {
+        if (mouseDownOutside) {
+            onClose?.();
+        }
+    };
+
     return (
-        <div className={`Modal-Component ${isOpen ? "Visible" : "Hidden"}`} onClick={onClose}>
-            <div className="Modal-Content" onClick={(e) => {e.stopPropagation()}}>{children}</div>
+        <div className={`Modal-Component ${isOpen ? "Visible" : "Hidden"}`} onMouseDown={handleMouseDown} onMouseUp={handleMouseUp}>
+            <div className="Modal-Content" onClick={(e) => {e.stopPropagation()}} ref={contentRef}>
+                {children}
+            </div>
         </div>
     );
 }

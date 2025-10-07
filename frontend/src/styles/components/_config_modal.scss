@@ -1,20 +1,29 @@
 @use "../Appearance/textbox" as *;
 
+.Modal-Content {
+    width: 100%;
+}
+
 .Config-Modal {
+    width: 100%;
+    
     .ConfigModal-Content {
         display: flex;
         flex-direction: column;
         align-items: start;
-        padding: 32px 0;
+        padding: 16px 0 32px 0;
 
         label {
-            font-weight: bold;
+            font-weight: bold;;
             color: gray;
         }
 
         input[type=text], input[type=password], select {
             @include TextBox-Control();
-            margin-bottom: 16px;
+            
+            &:not(:last-child) { margin-bottom: 16px; }
         }
+
+        select { cursor: pointer; }
     }
 }

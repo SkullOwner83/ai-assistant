@@ -1,5 +1,4 @@
 import logging
-import os
 from pathlib import Path
 from utils.file import File
 from typing import Optional
@@ -64,7 +63,6 @@ async def ask(request: Request, question: str = Form(...), conversation_id: Opti
     except Exception as e:
         logger.exception("Could not generate a response: %s.", e)
         response = results[0] if results and len(results) > 0 else "No se encontró información relevante."
-
 
     await chat_service.create_message(question, 'Client', conversation_id, db_session)
     answer = await chat_service.create_message(response, 'Server', conversation_id, db_session)
