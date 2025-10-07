@@ -1,7 +1,7 @@
 {
   "name": "ai_assistant",
   "productName": "AI Assistant",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Virtual assistant with artificial intelligence, capable of generating and retrieving file embeddings to perform semantic searches.",
   "main": "electron/main.js",
   "devDependencies": {

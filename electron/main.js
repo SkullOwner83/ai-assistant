@@ -15,13 +15,23 @@ async function createWindow() {
             ? path.join(process.resourcesPath, '..', 'assets', 'ai-logo.png')
             : path.join(process.resourcesPath, 'assets', 'ai-logo.png'),
         webPreferences: {
+            spellcheck: true,
             devTools: false,
             contextIsolation: true,
             nodeIntegration: false
         }
     });
 
+    win.webContents.session.setSpellCheckerLanguages(['es-MX', 'en-US'])
     win.setMenu(null);
+
+    win.webContents.on('before-input-event', (event, input) => {
+        if (input.key === 'F11') {
+            win.setFullScreen(!win.isFullScreen());
+            event.preventDefault();
+        }
+    });
+    
 
     const backendExe = isDev
         ? path.join(__dirname, '..', 'backend', 'dist', 'ai_assistant.exe')

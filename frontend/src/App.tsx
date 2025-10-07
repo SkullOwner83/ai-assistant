@@ -68,7 +68,7 @@ const App: React.FC = () => {
                 onError={showError}/>
 
             <Modal isOpen={isModalOpen} onClose={() => {setIsModalOpen(!isModalOpen)}}>
-                <div>
+                <div className="Warning-Modal">
                     <h1>Advertencia</h1>
                     <p>{modalMessage}</p>
 
