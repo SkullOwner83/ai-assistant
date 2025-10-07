@@ -8,6 +8,7 @@ import { DeleteModal } from './delete_modal'
 import type { Config } from '../interfaces/config'
 
 interface SideMenuProps {
+    config: Config,
     isOpen: boolean,
     items: Array<Conversation>,
     selectedItem: Conversation | null,
@@ -20,6 +21,7 @@ interface SideMenuProps {
 }
 
 export const SideMenu: React.FC<SideMenuProps> = ({ 
+    config,
     isOpen, 
     items, 
     selectedItem, 
@@ -143,7 +145,15 @@ export const SideMenu: React.FC<SideMenuProps> = ({
 
                 <button onClick={() => {
                     setIsModalOpen(true);
-                    setModalContent(<ConfigModal onSave={onSaveConfig} onCancel={() => setIsModalOpen(false)}/>);
+                    setModalContent(<ConfigModal 
+                        key={Date.now()} // Force remount the component for refresh initialValue
+                        initialValue={config} 
+                        onCancel={() => setIsModalOpen(false)}
+                        onSave={(c) => {
+                            onSaveConfig?.(c);
+                            setIsModalOpen(false);
+                        }}
+                    />);
                 }}>
                     Configuracion
                 </button>

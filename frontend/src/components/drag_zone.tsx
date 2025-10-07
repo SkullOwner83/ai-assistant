@@ -1,4 +1,5 @@
 import { useRef, useState } from "react";
+import { FileDetails } from "./file_details";
 
 interface DragZoneprops{ 
     validFiles: Array<string>;
@@ -27,15 +28,6 @@ export const DragZone: React.FC<DragZoneprops> = ({ validFiles, onFileChanged, o
             }
         }
     }
-
-    const formatFileSize = (bytes: number): string => {
-        if (bytes === 0) return "0 Bytes";
-        const k = 1024;
-        const sizes = ["Bytes", "KB", "MB", "GB"];
-        const i = Math.floor(Math.log(bytes) / Math.log(k));
-        const size = bytes / Math.pow(k, i);
-        return `${size.toFixed(2)} ${sizes[i]}`;
-    }
     
     return (
         <div 
@@ -49,7 +41,7 @@ export const DragZone: React.FC<DragZoneprops> = ({ validFiles, onFileChanged, o
                     <p>Tamaño máximo: 500MB</p>
                     <label className="Upload-Button">
                         Buscar archivo
-                        <input type="file" accept=".txt, .pdf" ref={browserFileRef} onChange={(e) => {
+                        <input type="file" accept=".txt, .pdf, .docs" ref={browserFileRef} onChange={(e) => {
                             const uploadedFile = e.target.files?.[0]
                             const extension = uploadedFile?.name.split(".").pop()?.toLowerCase();
 
@@ -65,26 +57,11 @@ export const DragZone: React.FC<DragZoneprops> = ({ validFiles, onFileChanged, o
                     </label>
                 </div>
 
-                {(file && (
-                    <div className="File-Container">
-                        <div className="Image-Container">
-                            <img src="txt file.png" alt="Formato del archivo" draggable={false}/>
-                        </div>
-
-                        <div className="File-information">
-                            <p>{file.name}</p>
-                            <p>{formatFileSize(file.size)}</p>
-                        </div>
-
-                        <button onClick={() => {
-                            if (browserFileRef.current) browserFileRef.current.value = "";
-                            setFile(null);
-                            onFileChanged?.(null);
-                        }}>
-                            <img src="Delete.png" alt="Eliminar archivo." draggable={false}/>
-                        </button>
-                    </div>
-                ))}
+                {(file && (<FileDetails file={file} onDelete={() => {
+                    if (browserFileRef.current) browserFileRef.current.value = "";
+                    setFile(null);
+                    onFileChanged?.(null);
+                }}/>))}
         </div>
     )
 }

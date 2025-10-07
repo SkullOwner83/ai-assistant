@@ -19,12 +19,7 @@ export const useChat = ({ onError }: useChatProps) => {
 
     // Load conversations from the database on startup
     useEffect(() => {
-        const get_conversations = async () => {
-            const response = await axios.get('http://localhost:8000/conversations');
-            setConversations(response.data);
-        }
-
-        get_conversations();
+        getConversations();
     }, [])
 
     // Update the corresponding messages when the conversation is changed
@@ -34,20 +29,30 @@ export const useChat = ({ onError }: useChatProps) => {
             return
         }
 
-        const get_messages = async () => {
-            try {
-                const response = await axios.get("http://localhost:8000/messages", {
-                    params: { conversation_id: currentConversation.idConversation }
-                });
-
-                setMessages(response.data);
-            } catch(error) {
-                console.error("Error al cargar las conversaciones: ", error);
-            }
-        }
-
-        get_messages();
+        getMessages(currentConversation.idConversation);
     }, [currentConversation])
+
+    const getConversations = async () => {
+        try {
+            const response = await axios.get('http://localhost:8000/conversations');
+            setConversations(response.data);
+        } catch(error) {
+            console.error("Error al cargar las conversaciones: ", error)
+        }
+    }
+
+    const getMessages = async (conversation_id?: string) => {
+        const params = conversation_id ? { conversation_id: conversation_id } : {};
+        try {
+            const response = await axios.get("http://localhost:8000/messages", {
+                params: params
+            });
+
+            setMessages(response.data);
+        } catch(error) {
+            console.error("Error al cargar los mensajes: ", error);
+        }
+    }
 
     const sendMessage = async () => {
         if (textBoxRef.current) {
