@@ -1,0 +1,20 @@
+@use "../Appearance/textbox" as *;
+
+.Config-Modal {
+    .ConfigModal-Content {
+        display: flex;
+        flex-direction: column;
+        align-items: start;
+        padding: 32px 0;
+
+        label {
+            font-weight: bold;
+            color: gray;
+        }
+
+        input[type=text], input[type=password], select {
+            @include TextBox-Control();
+            margin-bottom: 16px;
+        }
+    }
+}

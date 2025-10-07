@@ -5,6 +5,7 @@ import { Modal } from './modal'
 import { EditableLabel } from './editable_label'
 import { ConfigModal } from './config_modal'
 import { DeleteModal } from './delete_modal'
+import type { Config } from '../interfaces/config'
 
 interface SideMenuProps {
     isOpen: boolean,
@@ -14,6 +15,7 @@ interface SideMenuProps {
     onDeleteConversation?: (item: Conversation) => void,
     onRenameConversation?: (item: Conversation, newTitle: string) => void,
     onDownloadConversation?: (item: Conversation) => void,
+    onSaveConfig?: (newConfig: Config) => void;
     onToggle?: () => void
 }
 
@@ -25,6 +27,7 @@ export const SideMenu: React.FC<SideMenuProps> = ({
     onDeleteConversation, 
     onRenameConversation, 
     onDownloadConversation,
+    onSaveConfig,
     onToggle 
 }) => {
     const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
@@ -138,7 +141,14 @@ export const SideMenu: React.FC<SideMenuProps> = ({
                     </button></li>
                 </ul>
 
-                <Modal isOpen={isModalOpen} onClose={() => {setIsModalOpen(!isModalOpen)}}>
+                <button onClick={() => {
+                    setIsModalOpen(true);
+                    setModalContent(<ConfigModal onSave={onSaveConfig} onCancel={() => setIsModalOpen(false)}/>);
+                }}>
+                    Configuracion
+                </button>
+
+                <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(!isModalOpen)}>
                     {modalContent}
                 </Modal>
             </div>

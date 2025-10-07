@@ -8,6 +8,8 @@
 /backend/venv/
 /backend/
 /backend/build/
+**/__pycache__/
+**/*.pyc
 
 /frontend/node_modules/
 /frontend/build/

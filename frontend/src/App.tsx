@@ -6,6 +6,9 @@ import { Modal } from './components/modal';
 import { useState } from 'react';
 import type { Conversation } from './interfaces/conversation';
 
+import axios from "axios";
+import type { Config } from './interfaces/config';
+
 const App: React.FC = () => {
     const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
     const [modalMessage, setModalMessage] = useState<string | null>(null);
@@ -41,6 +44,11 @@ const App: React.FC = () => {
         setIsModalOpen(true);
     }
 
+    const saveConfig = async (newConfig: Config) => {
+        const response = await axios.post("http://localhost:8000/configuration", newConfig);
+        console.log(response.data);
+    }
+
     return (
         <main>
             <SideMenu
@@ -51,6 +59,7 @@ const App: React.FC = () => {
                 onDeleteConversation={deleteConversation}
                 onRenameConversation={renameConversation}
                 onDownloadConversation={downloadConversation}
+                onSaveConfig={saveConfig}
                 onToggle={() => setSideMenu(!sideMenu)}/>
 
             <Chat

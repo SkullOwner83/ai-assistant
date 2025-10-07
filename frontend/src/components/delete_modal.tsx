@@ -11,9 +11,7 @@ export const DeleteModal: React.FC<DeleteModalProps> = ({ description, onDelete,
     return(
         <div>
             <h1>Confirmar eliminación</h1>
-            <p>
-                <ReactMarkdown>{description}</ReactMarkdown>
-            </p>
+            <p><ReactMarkdown>{description}</ReactMarkdown></p>
 
             <div className="Modal-Buttons">
                 <button className="Cancel-Button" onClick={() => onCancel?.()}>Cancelar</button>

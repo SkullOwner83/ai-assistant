@@ -3,17 +3,14 @@ import os
 from pathlib import Path
 from utils.file import File
 from typing import Optional
-from fastapi import APIRouter, Depends, Form, HTTPException, UploadFile, status
+from fastapi import APIRouter, Depends, Form, HTTPException, Request, UploadFile, status
 from sqlalchemy.orm import Session
 from infraestructure.database import open_connection
-from infraestructure.ai_client import IAClient
 from services.chat_service import ChatService
 from schemas.askresponse_schema import AskResponseSchema
 from models.conversation import Conversation
 from services.services import rag_service
 
-API_KEY = os.getenv('API_KEY')
-ai_client = IAClient(API_KEY)
 chat_service = ChatService()
 logger = logging.getLogger(__name__)
 
@@ -23,7 +20,7 @@ router = APIRouter(
 )
 
 @router.post('/', response_model=AskResponseSchema, status_code=status.HTTP_200_OK)
-async def ask(question: str = Form(...), conversation_id: Optional[int] = Form(None), file: Optional[UploadFile] = None, db_session: Session = Depends(open_connection)) -> dict[str, str]:
+async def ask(request: Request, question: str = Form(...), conversation_id: Optional[int] = Form(None), file: Optional[UploadFile] = None, db_session: Session = Depends(open_connection)) -> dict[str, str]:
     conversation_created = None
     file_hash = None
 
@@ -62,6 +59,7 @@ async def ask(question: str = Form(...), conversation_id: Optional[int] = Form(N
     try:
         context = "\n\n".join(results) if results else None
         prompt = f"Context: {context}\n\nQuestion: {question}" if context else f"question: {question}"
+        ai_client = request.app.state.ai_client
         response = await ai_client.ask(prompt)
     except Exception as e:
         logger.exception("Could not generate a response: %s.", e)
