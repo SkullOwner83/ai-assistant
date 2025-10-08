@@ -54,7 +54,7 @@ export const useChat = ({ onError }: useChatProps) => {
         }
     }
 
-    const sendMessage = async () => {
+    const sendMessage = async (): Promise<void> => {
         if (textBoxRef.current) {
             if (!currentConversation && !file) {
                 onError?.("Adjunta un archivo para poder trabajar con él.");

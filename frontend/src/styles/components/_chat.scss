@@ -52,6 +52,33 @@
                 }
             }
         }
+
+        .Loading-Mark {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            user-select: none;
+            gap: 4px;
+
+            div {
+                width: 8px;
+                height: 8px;
+                //margin-bottom: 16px;
+                border-radius: 50px;
+                background-color: black;
+                animation: Loading 1s ease forwards infinite;
+           }
+
+            & div:nth-child(1) { animation-delay: 0s; }
+            & div:nth-child(2) { animation-delay: 0.2s; }
+            & div:nth-child(3) { animation-delay: 0.3s; }
+        }
+    }
+
+    @keyframes Loading {
+        0% { transform: translateY(0); }
+        50% { transform: translateY(-4px); }
+        100% { transform: translateY(0); }
     }
 
     .TextBox-Container {

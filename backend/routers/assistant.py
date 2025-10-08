@@ -19,6 +19,7 @@ router = APIRouter(
 
 @router.post('/', response_model=AskResponseSchema, status_code=status.HTTP_200_OK)
 async def ask(request: Request, question: str = Form(...), conversation_id: Optional[int] = Form(None), file: Optional[UploadFile] = None, db_session: Session = Depends(open_connection)) -> dict[str, str]:
+    rag_service = request.app.state.rag_service
     conversation_created = None
     file_hash = None
 
@@ -33,7 +34,6 @@ async def ask(request: Request, question: str = Form(...), conversation_id: Opti
             raise HTTPException(status_code=404, detail="The file is not valid.")
         
         file_hash = File.get_hash(file)
-        rag_service = request.app.state.rag_service
         await rag_service.process_file(file)
         conversation_name = f"{Path(file.filename).stem} - {question[:50]}"
         conversation_created = await chat_service.create_conversation(conversation_name, file_hash, db_session)
