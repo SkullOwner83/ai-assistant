@@ -31,7 +31,7 @@ config.load(config_path)
 
 app.state.config = config
 app.state.config_path = config_path
-app.state.ai_client = IAClient(api_key=config.apiKey, hf_model=config.hfModel)
+app.state.ai_client = IAClient(api_key=config.apiKey, hf_model=config.hfModel, max_tokens=config.maxTokens)
 app.state.rag_service = RAGService()
 
 logging.basicConfig(

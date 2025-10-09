@@ -16,7 +16,7 @@ router = APIRouter(
     tags=["conversations"]
 )
 
-@router.get('/', response_model=List[ConversationSchema], status_code=status.HTTP_200_OK)
+@router.get('', response_model=List[ConversationSchema], status_code=status.HTTP_200_OK)
 async def get_conversations(db: Session = Depends(open_connection)) -> List[ConversationSchema]:
     conversations = db.query(Conversation).all()
 
@@ -26,7 +26,7 @@ async def get_conversations(db: Session = Depends(open_connection)) -> List[Conv
 
     return conversations
 
-@router.put('/', status_code=status.HTTP_204_NO_CONTENT)
+@router.put('', status_code=status.HTTP_204_NO_CONTENT)
 async def update_conversation(conversation: ConversationSchema, db: Session = Depends(open_connection)) -> None:
     db_conversation = db.query(Conversation).filter(Conversation.idConversation==conversation.idConversation).first()
 
@@ -39,7 +39,7 @@ async def update_conversation(conversation: ConversationSchema, db: Session = De
     db.refresh(db_conversation)
     return Response(status_code=status.HTTP_204_NO_CONTENT)
 
-@router.delete('/', status_code=status.HTTP_204_NO_CONTENT)
+@router.delete('', status_code=status.HTTP_204_NO_CONTENT)
 async def delete_conversations(request: Request, conversation_id: int, db: Session = Depends(open_connection)) -> None:
     conversation = db.query(Conversation).filter(Conversation.idConversation==conversation_id).first()
     file_hash = conversation.fileHash

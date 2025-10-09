@@ -17,7 +17,7 @@ router = APIRouter(
     tags=["assistant"]
 )
 
-@router.post('/', response_model=AskResponseSchema, status_code=status.HTTP_200_OK)
+@router.post('', response_model=AskResponseSchema, status_code=status.HTTP_200_OK)
 async def ask(request: Request, question: str = Form(...), conversation_id: Optional[int] = Form(None), file: Optional[UploadFile] = None, db_session: Session = Depends(open_connection)) -> dict[str, str]:
     rag_service = request.app.state.rag_service
     conversation_created = None

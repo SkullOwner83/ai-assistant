@@ -6,7 +6,7 @@
 /backend/*.pyc
 /backend/chroma/
 /backend/venv/
-/backend/
+/backend/dist/
 /backend/build/
 **/__pycache__/
 **/*.pyc

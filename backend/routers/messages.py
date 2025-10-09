@@ -15,7 +15,7 @@ router = APIRouter(
     tags=["messages"]
 )
 
-@router.get('/', response_model=List[MessageSchema], status_code=status.HTTP_200_OK)
+@router.get('', response_model=List[MessageSchema], status_code=status.HTTP_200_OK)
 async def get_messages(conversation_id: int, db: Session = Depends(open_connection)) -> List[MessageSchema]:
     conversation = db.query(
         exists().where(Conversation.idConversation == conversation_id)
