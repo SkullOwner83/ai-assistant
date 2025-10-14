@@ -17,7 +17,8 @@ export const DeleteModal: React.FC<DeleteModalProps> = ({ description, onDelete,
                 <button className="Cancel-Button" onClick={() => onCancel?.()}>Cancelar</button>
                 <button
                     className="Delete-Button"
-                    onClick={() => {onDelete?.()}}>
+                    onClick={() => {onDelete?.()}}
+                    autoFocus>
                     Confirmar
                 </button>
             </div>

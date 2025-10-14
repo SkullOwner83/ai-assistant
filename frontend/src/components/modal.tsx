@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 interface Modal {
     isOpen: boolean,
@@ -9,6 +9,17 @@ interface Modal {
 export const Modal: React.FC<Modal> = ({ isOpen, onClose, children }) => {
     const contentRef = useRef<HTMLDivElement>(null);
     const [mouseDownOutside, setMouseDownOutside] = useState(false);
+
+    useEffect(() => {
+        const handleClose = (e: KeyboardEvent) => {
+            if (e.key === "Escape" && isOpen) {
+                onClose?.();
+            }
+        }
+
+        window.addEventListener("keydown", handleClose);
+        return () => window.removeEventListener("keydown", handleClose);
+    }, [isOpen, onClose]);
 
     const handleMouseDown = (e: React.MouseEvent) => {
         if (contentRef.current && !contentRef.current.contains(e.target as Node)) {
