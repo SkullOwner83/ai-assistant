@@ -16,7 +16,12 @@ async def get_config(request: Request) -> Config:
 @router.post('', status_code=status.HTTP_200_OK)
 async def save_config(request: Request, newConfig: ConfigSchema):
     ai_client: IAClient = request.app.state.ai_client
-    ai_client.update_config(api_key=newConfig.apiKey, hf_model=newConfig.hfModel, max_tokens=newConfig.maxTokens)
+    ai_client.update_config(
+        api_key=newConfig.apiKey, 
+        hf_model=newConfig.hfModel, 
+        max_tokens=newConfig.maxTokens,
+        temperature=newConfig.temperature
+    )
 
     config: Config = request.app.state.config
     for key, value in newConfig.__dict__.items():

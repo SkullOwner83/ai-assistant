@@ -37,7 +37,7 @@ export const Chat: React.FC<ChatProps> = ({ messages, textBoxRef, attachedFile, 
     return (
         <div className="Chat-Component">
             <div className="Messages-Container">
-                {!currentConversation && !waitForMessage ? (
+                {!currentConversation && messages.length < 1 ? (
                     <DragZone onFileChanged={onFileChanged} validFiles={validFiles} onError={onError}/>
                 ) : (
                     <ul>
@@ -61,9 +61,7 @@ export const Chat: React.FC<ChatProps> = ({ messages, textBoxRef, attachedFile, 
                         {waitForMessage && (
                             <div className="Loading-Mark">
                                 <p>🧠</p>
-                                <div/>
-                                <div/>
-                                <div/>
+                                <div/><div/><div/>
                             </div>
                         )}
                     </ul>

@@ -10,6 +10,7 @@ class Config():
     openaiModel: Optional[str] = 'gpt-4o-mini'
     hfModel: Optional[str] = 'meta-llama/Llama-3.1-8B-Instruct:cerebras'
     maxTokens: Optional[int] = 1000
+    temperature: Optional[float] = 0.8
 
     def load(self, path: str) -> None:
         if not os.path.exists(path):

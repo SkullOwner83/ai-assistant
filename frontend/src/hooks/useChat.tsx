@@ -95,6 +95,13 @@ export const useChat = ({ onError }: useChatProps) => {
                 }
             } catch(error) {
                 console.error("Error al enviar el mensaje: ", error);
+                const errorMessage: Message = {
+                    idMessage: "1",
+                    messageFrom: "Server",
+                    content: "Error al enviar el mensaje: "  + error
+                }
+
+                setMessages(prev => [...prev, errorMessage]);
             }
         }
     }

@@ -6,6 +6,7 @@ class ConfigSchema(BaseModel):
     openaiModel: str
     hfModel: str
     maxTokens: int
+    temperature: float
 
     model_config = {
         "from_attributes": True

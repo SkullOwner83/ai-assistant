@@ -1,4 +1,5 @@
 @use "../Appearance/textbox" as *;
+@use "../mixins.scss" as *;
 
 .Modal-Content {
     width: 100%;
@@ -8,22 +9,27 @@
     width: 100%;
     
     .ConfigModal-Content {
-        display: flex;
-        flex-direction: column;
-        align-items: start;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        grid-auto-flow: dense;
         padding: 16px 0 32px 0;
+        overflow: hidden;
+        gap: 16px;
 
-        label {
-            font-weight: bold;;
-            color: gray;
-        }
-
-        input[type=text], input[type=password], select {
-            @include TextBox-Control();
+        div {
+            grid-column: 1 / -1;
+            text-align: left;
             
-            &:not(:last-child) { margin-bottom: 16px; }
-        }
+            label {
+                font-weight: bold;;
+                color: gray;
+            }
 
-        select { cursor: pointer; }
+            input[type=text], input[type=password], input[type=number], select {
+                @include TextBox-Control();
+            }
+
+            select { cursor: pointer; }
+        }
     }
 }

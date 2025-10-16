@@ -3,7 +3,7 @@ import axios from "axios";
 import type { Config } from "../interfaces/config";
 
 export const useConfig = () => {
-    const [config, setConfig] = useState<Config>({apiKey: '', aiProvider: '', openaiModel: '', hfModel: ''});
+    const [config, setConfig] = useState<Config>({apiKey: '', aiProvider: '', openaiModel: '', hfModel: '', maxTokens: 1000, temperature: 0.8});
     useEffect(() => { loadConfig()}, [])
     
     const loadConfig = async () => {

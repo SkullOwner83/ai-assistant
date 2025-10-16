@@ -3,4 +3,6 @@ export interface Config {
     aiProvider: string;
     openaiModel: string;
     hfModel: string;
+    maxTokens: number;
+    temperature: number;
 }

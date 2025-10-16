@@ -161,7 +161,7 @@ export const SideMenu: React.FC<SideMenuProps> = ({
                     </button></li>
                 </ul>
 
-                <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(!isModalOpen)}>
+                <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
                     {modalContent}
                 </Modal>
             </div>

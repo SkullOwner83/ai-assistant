@@ -67,7 +67,7 @@ const App: React.FC = () => {
                 onFileChanged={setFile}
                 onError={showError}/>
 
-            <Modal isOpen={isModalOpen} onClose={() => {setIsModalOpen(!isModalOpen)}}>
+            <Modal isOpen={isModalOpen} onClose={() => {setIsModalOpen(false)}}>
                 <div className="Warning-Modal">
                     <h1>Advertencia</h1>
                     <p>{modalMessage}</p>
