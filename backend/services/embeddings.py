@@ -31,7 +31,7 @@ class Embeddings():
             outputs: BaseModelOutput = self.model(**tensors)
 
         embedding = outputs.last_hidden_state.mean(dim=1)
-        vector = embedding.squeeze().numpy()
+        vector = embedding.squeeze().tolist()
         return vector
     
     # Generate a file with the vector representation of a text to be used as input to the model

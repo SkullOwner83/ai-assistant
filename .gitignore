@@ -2,10 +2,10 @@
 /node_modules
 
 /backend/.env
+/backend/.venv/
 /backend/__pycache__/
 /backend/*.pyc
 /backend/chroma/
-/backend/venv/
 /backend/dist/
 /backend/build/
 **/__pycache__/

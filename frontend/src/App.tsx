@@ -1,11 +1,11 @@
 import { SideMenu } from './components/side_menu';
 import { Chat } from './components/chat';
 import { useChat } from './hooks/useChat';
-import './styles/styles.scss'
 import { Modal } from './components/modal';
 import { useState } from 'react';
-import type { Conversation } from './interfaces/conversation';
 import { useConfig } from './hooks/useConfig';
+import type { Conversation } from './interfaces/conversation';
+import './styles/styles.scss'
 
 const App: React.FC = () => {
     const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
